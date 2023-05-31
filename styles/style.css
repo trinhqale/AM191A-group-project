@@ -1,0 +1,125 @@
+body {
+    display: grid;
+    grid-template-rows: auto auto auto;
+    grid-template-areas: "header" "main_content";
+    background-color: aqua;
+    gap: 10px;
+}
+
+header {
+    grid-area: header;
+    justify-self: stretch;
+    align-self: center;
+}
+
+#footer {
+    grid-area: footer;
+}
+
+.main {
+    grid-area: main_content;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "main_map content";
+    display: grid;
+}
+
+#content {
+    grid-area: main_content;
+    display: grid;
+    grid-template-columns: .5fr .5fr;
+    grid-template-areas: "main_map sidebar";
+    /* add charts */
+    column-gap: 1%;
+    margin-top: 8%;
+    margin-bottom: 8%;
+    padding-left: 3%;
+    padding-right: 3%;
+}
+
+#the_map {
+    height: 80vh;
+    grid-area: main_map;
+}
+
+#theSurvey {
+    grid-area: survey;
+}
+
+#placeForButtons {
+    grid-area: buttonHome;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+#sidebar {
+    /*right side panel*/
+    grid-area: sidebar;
+    font-family: 'DM Sans', sans-serif;
+    /* background-color: #81b5a8; */
+    padding: 20px;
+    border-radius: 25px;
+    overflow-y: scroll;
+    height: 500px;
+}
+
+
+/* navbar */
+
+ul.navbar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+li.navitem {
+    float: left;
+}
+
+li.navitem.logo {
+    float: left;
+    padding: 14px 16px;
+}
+
+li.navitem.logo a {
+    display: block;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+}
+
+li.navitem a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li.navitem a:hover {
+    background-color: #111;
+}
+
+li.navitem.right {
+    float: right;
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: flex-end;
+    padding: 20px;
+    background-color: #333;
+}
+
+.navbar-container .logo {
+    margin-right: auto;
+    /* Pushes the logo to the right */
+}
+
+.navbar-container .nav-button {
+    padding: 5px 10px;
+    /* Adjust the button padding for desired size */
+    font-size: 16px;
+    /* Adjust the font size for desired size */
+}

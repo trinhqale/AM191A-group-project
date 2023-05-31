@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Gender Inequality in Transportation Map</title>
+    <!-- hint: remember to change your page title! -->
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" href="#">
+    <link rel="stylesheet" href="styles/style.css">
+
+    <!-- Leaflet's css-->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+
+    <!-- Leaflet's JavaScript-->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+    <!-- Papa Parse -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <!-- turf -->
+    <script src='https://unpkg.com/@turf/turf@6.3.0/turf.min.js'></script>
+</head>
+
+<body>
+    <header>
+
+        <div>
+
+            <ul class="navbar">
+                <li class="navitem logo">
+                    <a> LOGO </a>
+                </li>
+                <li class="navitem right"><a href="https://forms.gle/j3HPawxrJzzCoeQX7" target="_blank">Add Story</a></li>
+                <li class="navitem right"><a href="#">About</a></li>
+                <li class="navitem right"><a href="#">Home</a></li>
+            </ul>
+        </div>
+    </header>
+    <div id="content">
+        <div id="the_map"></div>
+        <div id="sidebar">
+            <div id="stories">
+                <h2>Click on a region to read different stories!</h2>
+            </div>
+        </div>
+    </div>
+    <footer>
+        Copyright(2023)
+    </footer>
+    <script src="js/init.js"></script>
+</body>
+
+</html>
