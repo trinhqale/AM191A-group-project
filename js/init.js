@@ -32,29 +32,27 @@ function loadData(url) {
     })
 }
 
-
 function processData(results) {
     console.log(results)
     results.data.forEach(data => {
-        console.log(data)
-        filterResponseData(data)
-    })
-    // TODO: add filter checkbox/buttons and get proper responses 
-    let chosenResponses = positiveResponses.concat(negativeResponses, neutralResponses) 
-    getBoundary(mapPath, chosenResponses) 
+            console.log(data)
+            filterResponseData(data)
+        })
+        // TODO: add filter checkbox/buttons and get proper responses 
+    let chosenResponses = positiveResponses.concat(negativeResponses, neutralResponses)
+    getBoundary(mapPath, chosenResponses)
 }
 
-function filterResponseData(data)
-{
+function filterResponseData(data) {
     let userZipcode = data['What is the zip code of your primary home?']
     let userExperience = data['Overall, what would you rate your work life balance?']
-    let caregiver = (data['Are you the primary caregiver of a dependent in your household?'] == "Yes")? true : false
-    // TODO: add more details as needed 
+    let caregiver = data['Are you the primary caregiver of a dependent in your household?']
+        // TODO: add more details as needed 
     let userResponse = {
-        "zipcode" : userZipcode, 
-        "commuteMeans" : data['How do you typically travel to and from campus?'],
-        "caregiver" :  caregiver,
-        "WLBStory" : data['How is your work life balance affected by the way you commute?'],
+        "zipcode": userZipcode,
+        "commuteMeans": data['How do you typically travel to and from campus?'],
+        "caregiver": caregiver,
+        "WLBStory": data['How is your work life balance affected by the way you commute?'],
     }
     if (userExperience.includes("Positive")) {
         console.log("positive")
@@ -71,46 +69,56 @@ function filterResponseData(data)
 }
 
 // mapping by zipcode
-function getBoundary(mapPath, userResponses) {
+function getBoundary(mapPath, chosenResponses) {
     fetch(mapPath)
-    .then(response => {
-        return response.json();
+        .then(response => {
+            return response.json();
         })
         .then(data => {
             function getStyle(currentZipcode) {
                 // check if the current zipcode is in the responses
-                for(let i = 0; i < userResponses.length; i++)
-                {
+                for (let i = 0; i < chosenResponses.length; i++) {
                     // TODO: instead of random color, maybe color based on number of responses?  
-                    if(userResponses[i].zipcode == currentZipcode)
-                    {
-                        console.log("Matched")
+                    if (chosenResponses[i].zipcode == currentZipcode) {
                         var r = Math.floor(Math.random() * 255);
                         var g = Math.floor(Math.random() * 255);
                         var b = Math.floor(Math.random() * 255);
-                        return {fillColor: "rgb(" + r + " ," + g + "," + b + ")",
-                        opacity : 1}
+                        return {
+                            fillColor: "rgb(" + r + " ," + g + "," + b + ")",
+                            opacity: 1
+                        }
                     }
                 } //else return blank
-                return {fillColor: "#efefef",
-                        opacity : 0}
+                return {
+                    fillColor: "#efefef",
+                    opacity: 0
+                }
             }
+
             function style(feature) {
                 return getStyle(feature.properties.zcta)
             }
             currentLayer = L.geoJSON(data, {
                 style: style,
-                onEachFeature: onEachFeature
+                onEachFeature: onEachFeatureClosure(chosenResponses)
             }).addTo(map)
         })
 }
 
-function onEachFeature(feature, layer) {
-    layer.on({
-        mouseover: highlightFeature,
-        mouseout: resetHighlight,
-        click: populateSidebar
-    });
+function onEachFeatureClosure(chosenResponses) {
+    return function onEachFeature(feature, layer) {
+        let responsesByZipcode = []
+        chosenResponses.forEach(response => {
+            if (response.zipcode == feature.properties.zcta) {
+                responsesByZipcode.push(response)
+            }
+        })
+        layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight,
+            click: populateSidebar(responsesByZipcode)
+        });
+    }
 }
 
 // TODO: Custom highlight info as in tutorial: https://leafletjs.com/examples/choropleth/
@@ -131,9 +139,27 @@ function resetHighlight(e) {
     currentLayer.resetStyle(e.target);
 }
 
-// TODO: make sidebar here, currently just zoom in to the region
-function populateSidebar(e) {
-    map.fitBounds(e.target.getBounds());
+// TODO: make changes to sidebar here
+function populateSidebar(responsesByZipcode) {
+    return function onRegionClick(e) {
+        let layer = e.target
+        map.fitBounds(e.target.getBounds());
+
+        document.getElementById("stories").innerHTML = ""
+        console.log(responsesByZipcode)
+        responsesByZipcode.forEach(response => {
+            document.getElementById("stories").innerHTML += `${response.zipcode} 
+                                                            <br>
+                                                            ${response.commuteMeans}
+                                                            <br>
+                                                            caregiver: ${response.caregiver}
+                                                            <br>
+                                                            ${response.WLBStory}
+                                                            <br> <br> <br>`
+        })
+    }
 }
+
+
 
 loadData(dataUrl)
