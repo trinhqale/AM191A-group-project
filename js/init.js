@@ -3,27 +3,26 @@ const map = L.map('the_map').setView(mapOptions.center, mapOptions.zoom);
 
 let mapPath = "data/ca_zipcodes.geojson"
 
-let positiveLayer = L.featureGroup();
-let negativeLayer = L.featureGroup();
-let neutralLayer = L.featureGroup();
-
 let positiveResponses = []
 let negativeResponses = []
 let neutralResponses = []
 
-let layers = {
-    "Positive": positiveLayer,
-    "Negative": negativeLayer,
-    "Neutral": neutralLayer
-};
+let caregiverResponses = []
+let noncaregiverResponses = []
+
+let currentLayer
 
 const dataUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCF24Aalv8tZ3neF_4LZQ21KLokn5jtZgpc9-wiAuDhT1_LXNYtxKRtsM-eo0UAzhGUHqQvJCgCNmI/pub?output=csv"
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(map);
-
-L.control.layers(null, layers).addTo(map);
+// change map type
+let Jawg_Light = L.tileLayer('https://{s}.tile.jawg.io/jawg-light/{z}/{x}/{y}{r}.png?access-token={accessToken}', {
+    attribution: '<a href="http://jawg.io" title="Tiles Courtesy of Jawg Maps" target="_blank">&copy; <b>Jawg</b>Maps</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    minZoom: 0,
+    maxZoom: 22,
+    subdomains: 'abcd',
+    accessToken: 'FkWnkf1e22dnL71CnkeDRnZeEZRyPNd6DqNr2frT4o5zPMcnKvgfcgG2gQCNjnR7'
+});
+Jawg_Light.addTo(map)
 
 function loadData(url) {
     Papa.parse(url, {
@@ -33,29 +32,6 @@ function loadData(url) {
     })
 }
 
-function filterResponseData(data)
-{
-    let userZipcode = data['What is the zip code of your primary home?']
-    let WLBExperience = data['Overall, what would you rate your work life balance?']
-    let caregiver = (data['Are you the primary caregiver of a dependent in your household?'] == "Yes")? true : false
-    let userResponse = {
-        "zipcode" : userZipcode, 
-        "commuteMeans" : data['How do you typically travel to and from campus?'],
-        "caregiver" :  caregiver,
-        "user"
-    }
-    
-    if (userExperience.includes("Positive")) {
-        console.log("positive")
-        positiveLayer.addLayer(L.circleMarker([data.lat, data.lng], circleOptions).bindPopup(content))
-    } else if (userExperience.includes("Negative")) {
-        console.log("negative")
-        negativeLayer.addLayer(L.circleMarker([data.lat, data.lng], circleOptions).bindPopup(content))
-    } else if (userExperience.includes("Neutral")) {
-        console.log("neutral")
-        neutralLayer.addLayer(L.circleMarker([data.lat, data.lng], circleOptions).bindPopup(content))
-    }
-}
 
 function processData(results) {
     console.log(results)
@@ -63,43 +39,101 @@ function processData(results) {
         console.log(data)
         filterResponseData(data)
     })
-    positiveLayer.addTo(map)
-    negativeLayer.addTo(map)
-    neutralLayer.addTo(map)
-    let allLayers = L.featureGroup([positiveLayer, negativeLayer, neutralLayer]);
-    map.fitBounds(allLayers.getBounds());
-    getBoundary(mapPath)
+    // TODO: add filter checkbox/buttons and get proper responses 
+    let chosenResponses = positiveResponses.concat(negativeResponses, neutralResponses) 
+    getBoundary(mapPath, chosenResponses) 
+}
+
+function filterResponseData(data)
+{
+    let userZipcode = data['What is the zip code of your primary home?']
+    let userExperience = data['Overall, what would you rate your work life balance?']
+    let caregiver = (data['Are you the primary caregiver of a dependent in your household?'] == "Yes")? true : false
+    // TODO: add more details as needed 
+    let userResponse = {
+        "zipcode" : userZipcode, 
+        "commuteMeans" : data['How do you typically travel to and from campus?'],
+        "caregiver" :  caregiver,
+        "WLBStory" : data['How is your work life balance affected by the way you commute?'],
+    }
+    if (userExperience.includes("Positive")) {
+        console.log("positive")
+        positiveResponses.push(userResponse)
+    } else if (userExperience.includes("Negative")) {
+        console.log("negative")
+        negativeResponses.push(userResponse)
+    } else if (userExperience.includes("Neutral")) {
+        console.log("neutral")
+        neutralResponses.push(userResponse)
+    }
+
+    // TODO: Caregiver responses
 }
 
 // mapping by zipcode
-function getBoundary(mapPath) {
+function getBoundary(mapPath, userResponses) {
     fetch(mapPath)
-        .then(response => {
-            return response.json();
+    .then(response => {
+        return response.json();
         })
         .then(data => {
-            function getColor() {
-                var r = Math.floor(Math.random() * 255);
-                var g = Math.floor(Math.random() * 255);
-                var b = Math.floor(Math.random() * 255);
-                return "rgb(" + r + " ," + g + "," + b + ")";
+            function getStyle(currentZipcode) {
+                // check if the current zipcode is in the responses
+                for(let i = 0; i < userResponses.length; i++)
+                {
+                    // TODO: instead of random color, maybe color based on number of responses?  
+                    if(userResponses[i].zipcode == currentZipcode)
+                    {
+                        console.log("Matched")
+                        var r = Math.floor(Math.random() * 255);
+                        var g = Math.floor(Math.random() * 255);
+                        var b = Math.floor(Math.random() * 255);
+                        return {fillColor: "rgb(" + r + " ," + g + "," + b + ")",
+                        opacity : 1}
+                    }
+                } //else return blank
+                return {fillColor: "#efefef",
+                        opacity : 0}
             }
-
             function style(feature) {
-                return {
-                    fillColor: getColor(),
-                    weight: 2,
-                    opacity: 1,
-                    color: 'white',
-                    dashArray: '3',
-                    fillOpacity: 0.7
-                };
+                return getStyle(feature.properties.zcta)
             }
             currentLayer = L.geoJSON(data, {
                 style: style,
-                // onEachFeature: onEachFeature
+                onEachFeature: onEachFeature
             }).addTo(map)
         })
+}
+
+function onEachFeature(feature, layer) {
+    layer.on({
+        mouseover: highlightFeature,
+        mouseout: resetHighlight,
+        click: populateSidebar
+    });
+}
+
+// TODO: Custom highlight info as in tutorial: https://leafletjs.com/examples/choropleth/
+function highlightFeature(e) {
+    var layer = e.target;
+
+    layer.setStyle({
+        weight: 5,
+        color: '#666',
+        dashArray: '',
+        fillOpacity: 0.7
+    });
+
+    layer.bringToFront();
+}
+
+function resetHighlight(e) {
+    currentLayer.resetStyle(e.target);
+}
+
+// TODO: make sidebar here, currently just zoom in to the region
+function populateSidebar(e) {
+    map.fitBounds(e.target.getBounds());
 }
 
 loadData(dataUrl)
