@@ -10,6 +10,8 @@ let neutralResponses = []
 let caregiverResponses = []
 let noncaregiverResponses = []
 
+let chosenResponses = []
+
 let currentLayer
 
 const dataUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCF24Aalv8tZ3neF_4LZQ21KLokn5jtZgpc9-wiAuDhT1_LXNYtxKRtsM-eo0UAzhGUHqQvJCgCNmI/pub?output=csv"
@@ -33,13 +35,15 @@ function loadData(url) {
 }
 
 function processData(results) {
+    chosenResponses = []
     console.log(results)
     results.data.forEach(data => {
             console.log(data)
             filterResponseData(data)
         })
+    
         // TODO: add filter checkbox/buttons and get proper responses 
-    let chosenResponses = positiveResponses.concat(negativeResponses, neutralResponses)
+    chosenResponses = positiveResponses.concat(negativeResponses, neutralResponses)
     getBoundary(mapPath, chosenResponses)
 }
 
@@ -76,22 +80,22 @@ function getBoundary(mapPath, chosenResponses) {
         })
         .then(data => {
             function getStyle(currentZipcode) {
-                // check if the current zipcode is in the responses
-                for (let i = 0; i < chosenResponses.length; i++) {
-                    // TODO: instead of random color, maybe color based on number of responses?  
-                    if (chosenResponses[i].zipcode == currentZipcode) {
-                        var r = Math.floor(Math.random() * 255);
-                        var g = Math.floor(Math.random() * 255);
-                        var b = Math.floor(Math.random() * 255);
-                        return {
-                            fillColor: "rgb(" + r + " ," + g + "," + b + ")",
-                            opacity: 1
-                        }
+                let count = getResponseNumber(currentZipcode);
+                if (count > 0)
+                {
+                    return{
+                        fillColor: getColor(count),
+                        weight: 1,
+                        color: '#666',
+                        dashArray: '',
+                        fillOpacity: 0.7
+                    } 
+                }
+                else{
+                    return {
+                        fillColor: "#efefef",
+                        opacity: 0
                     }
-                } //else return blank
-                return {
-                    fillColor: "#efefef",
-                    opacity: 0
                 }
             }
 
@@ -103,6 +107,30 @@ function getBoundary(mapPath, chosenResponses) {
                 onEachFeature: onEachFeatureClosure(chosenResponses)
             }).addTo(map)
         })
+}
+
+function getResponseNumber(currentZipcode){
+    let count = 0
+    for (let i = 0; i < chosenResponses.length; i++) {
+        if (chosenResponses[i].zipcode == currentZipcode) {
+            count++;
+        }
+    }
+    return count
+}
+
+// TODO: Change the scale as we get more responses
+// TODO: Change the colors as you like at https://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3 (Ctrl + Click)
+function getColor(d) {
+    // return d >= 5 ? '#b30000' :
+    //        d >= 4 ? '#e34a33' :
+    //        d >= 3 ? '#fc8d59' :
+    //        d >= 2 ? '#fdbb84' :
+    //        d >= 1 ? '#fdd49e' :
+    //                 '#fef0d9' ;
+    return d >= 2 ?  '#e34a33':
+           d >= 1 ? '#fdbb84' :
+           null
 }
 
 function onEachFeatureClosure(chosenResponses) {
@@ -121,45 +149,80 @@ function onEachFeatureClosure(chosenResponses) {
     }
 }
 
-// TODO: Custom highlight info as in tutorial: https://leafletjs.com/examples/choropleth/
 function highlightFeature(e) {
     var layer = e.target;
-
-    layer.setStyle({
-        weight: 5,
-        color: '#666',
-        dashArray: '',
-        fillOpacity: 0.7
-    });
-
     layer.bringToFront();
+    info.update(layer.feature.properties);
 }
 
 function resetHighlight(e) {
     currentLayer.resetStyle(e.target);
+    info.update();
 }
 
 // TODO: make changes to sidebar here
 function populateSidebar(responsesByZipcode) {
     return function onRegionClick(e) {
         let layer = e.target
-        map.fitBounds(e.target.getBounds());
-
-        document.getElementById("stories").innerHTML = ""
-        console.log(responsesByZipcode)
-        responsesByZipcode.forEach(response => {
-            document.getElementById("stories").innerHTML += `${response.zipcode} 
-                                                            <br>
-                                                            ${response.commuteMeans}
-                                                            <br>
-                                                            caregiver: ${response.caregiver}
-                                                            <br>
-                                                            ${response.WLBStory}
-                                                            <br> <br> <br>`
-        })
+        if(responsesByZipcode.length != 0)
+        {
+            map.fitBounds(layer.getBounds());
+            document.getElementById("stories").innerHTML = ""
+            console.log(responsesByZipcode)
+            responsesByZipcode.forEach(response => {
+                document.getElementById("stories").innerHTML += `${response.zipcode} 
+                <br>
+                ${response.commuteMeans}
+                <br>
+            caregiver: ${response.caregiver}
+            <br>
+            ${response.WLBStory}
+            <br> <br> <br>`
+            })
+        }
     }
 }
 
-
-
 loadData(dataUrl)
+
+// Add info for mouse hovering 
+var info = L.control();
+info.onAdd = function (map) {
+    this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+    this.update();
+    return this._div;
+};
+
+info.update = function (props) {
+    let count = 0
+    if(props)
+    {
+        count = getResponseNumber(props.zcta)
+    }
+    this._div.innerHTML = '<h4>Responses by zipcode</h4>' +  ((props && count != 0) ?
+        'Zipcode: ' + props.zcta + '<br />' + 'Number of responses: ' + count
+        : 'Hover over a zipcode');
+};
+
+info.addTo(map);
+
+// add legend
+// TODO: change the scale as we receive more responses
+var legend = L.control({position: 'bottomleft'});
+
+legend.onAdd = function (map) {
+    var div = L.DomUtil.create('div', 'info legend'),
+        grades = [1,2], // change here
+        labels = [];
+    for (var i = 0; i < grades.length; i++) {
+        div.innerHTML +=
+            '<i style="background:' + 
+            getColor(grades[i] ) 
+            + '"></i> '  + (grades[i]) + '<br>';
+    }
+    console.log("Color: ", getColor(grades[i] + 1))
+
+    return div;
+};
+
+legend.addTo(map);
