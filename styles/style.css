@@ -2,7 +2,7 @@ body {
     display: grid;
     grid-template-rows: auto auto auto;
     grid-template-areas: "header" "main_content";
-    background-color: pink;
+    background-color: #F7F6F3;
     gap: 10px;
 }
 
@@ -70,7 +70,7 @@ ul.navbar {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: #333;
+    background-color: #F7F6F3;
 }
 
 li.navitem {
@@ -91,25 +91,18 @@ li.navitem.logo a {
 
 li.navitem a {
     display: block;
-    color: white;
+    color: #333;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
 }
 
 li.navitem a:hover {
-    background-color: #111;
+    color: #777;
 }
 
 li.navitem.right {
     float: right;
-}
-
-.navbar-container {
-    display: flex;
-    justify-content: flex-end;
-    padding: 20px;
-    background-color: #333;
 }
 
 .navbar-container .logo {
@@ -147,4 +140,10 @@ li.navitem.right {
     float: left;
     margin-right: 8px;
     opacity: 0.7;
+}
+
+/* story response */
+#response {
+    padding-bottom: 30px;
+
 }

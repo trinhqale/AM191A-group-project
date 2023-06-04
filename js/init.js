@@ -170,14 +170,14 @@ function populateSidebar(responsesByZipcode) {
             document.getElementById("stories").innerHTML = ""
             console.log(responsesByZipcode)
             responsesByZipcode.forEach(response => {
-                document.getElementById("stories").innerHTML += `${response.zipcode} 
+                document.getElementById("stories").innerHTML += `<div class="response">${response.zipcode} 
                 <br>
                 ${response.commuteMeans}
                 <br>
-            caregiver: ${response.caregiver}
-            <br>
+            Caregiver: ${response.caregiver}
+            <br> <br>
             ${response.WLBStory}
-            <br> <br> <br>`
+            </div>`
             })
         }
     }
