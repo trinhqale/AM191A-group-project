@@ -4,6 +4,22 @@ body {
     grid-template-areas: "header" "main_content";
     background-color: #F7F6F3;
     gap: 10px;
+    
+    font-family: Manrope, sans-serif;
+    font-size: 14px;
+}
+
+h1, h2 {
+    font-family: Gelica, serif;
+    font-style: normal;
+        font-weight: 400;
+}
+
+h3 {
+    font-family: Manrope, sans-serif;
+    font-style: normal;
+        font-weight: 400;
+    font-size: 20px;
 }
 
 header {
@@ -18,9 +34,8 @@ header {
 
 .main {
     grid-area: main_content;
-    grid-template-columns: 1fr 1fr;
-    grid-template-areas: "main_map content";
-    display: grid;
+    padding-left: 10%;
+    padding-right: 10%;
 }
 
 #content {
@@ -54,7 +69,6 @@ header {
 #sidebar {
     /*right side panel*/
     grid-area: sidebar;
-    font-family: 'DM Sans', sans-serif;
     /* background-color: #81b5a8; */
     padding: 20px;
     border-radius: 25px;
@@ -92,9 +106,13 @@ li.navitem.logo a {
 li.navitem a {
     display: block;
     color: #333;
+    letter-spacing: .3px;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
+    text-transform: uppercase;
+    font-family: Manrope, sans-serif;
+    font-weight: 700;
 }
 
 li.navitem a:hover {
@@ -143,7 +161,7 @@ li.navitem.right {
 }
 
 /* story response */
-#response {
+.response {
     padding-bottom: 30px;
 
 }

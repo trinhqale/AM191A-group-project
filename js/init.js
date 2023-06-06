@@ -169,15 +169,11 @@ function populateSidebar(responsesByZipcode) {
             map.fitBounds(layer.getBounds());
             document.getElementById("stories").innerHTML = ""
             console.log(responsesByZipcode)
+
+            // add if statement to sort through caregiver vs not to include caregiver question
             responsesByZipcode.forEach(response => {
-                document.getElementById("stories").innerHTML += `<div class="response">${response.zipcode} 
-                <br>
-                ${response.commuteMeans}
-                <br>
-            Caregiver: ${response.caregiver}
-            <br> <br>
-            ${response.WLBStory}
-            </div>`
+                document.getElementById("stories").innerHTML += 
+                `<div class="response">${response.zipcode} <br>${response.commuteMeans} <br> Caregiver: ${response.caregiver} <br> <br><b>How is your work life balance affected by the way you commute?</b> <br> ${response.WLBStory} </div>`
             })
         }
     }
