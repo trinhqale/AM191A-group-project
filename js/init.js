@@ -56,6 +56,7 @@ function filterResponseData(data) {
         "zipcode": userZipcode,
         "commuteMeans": data['How do you typically travel to and from campus?'],
         "caregiver": caregiver,
+        "household": data['How many people are in your household?'],
         "WLBStory": data['How is your work life balance affected by the way you commute?'],
     }
     if (userExperience.includes("Positive")) {
@@ -173,7 +174,13 @@ function populateSidebar(responsesByZipcode) {
             // add if statement to sort through caregiver vs not to include caregiver question
             responsesByZipcode.forEach(response => {
                 document.getElementById("stories").innerHTML += 
-                `<div class="response">${response.zipcode} <br>${response.commuteMeans} <br> Caregiver: ${response.caregiver} <br> <br><b>How is your work life balance affected by the way you commute?</b> <br> ${response.WLBStory} </div>`
+                `<div class="response"> 
+                    <img src='assets/home-icon.png'> ${response.zipcode} <br>
+                    <img src='assets/bus-icon.png'> ${response.commuteMeans} <br> 
+                    <img src='assets/caregiver-icon.png'> Caregiver: ${response.caregiver} <br> 
+                    Household: ${response.household} <br> <br>
+                    <b>How is your work life balance affected by the way you commute?</b> <br> ${response.WLBStory} 
+                </div>`
             })
         }
     }
@@ -195,9 +202,10 @@ info.update = function (props) {
     {
         count = getResponseNumber(props.zcta)
     }
-    this._div.innerHTML = '<h4>Responses by zipcode</h4>' +  ((props && count != 0) ?
-        'Zipcode: ' + props.zcta + '<br />' + 'Number of responses: ' + count
-        : 'Hover over a zipcode');
+    this._div.innerHTML = 
+        '<h4>Responses by Zipcode</h4>' +  ((props && count != 0) ?
+        '<img src="assets/home-icon.png"> Zipcode: ' + props.zcta + '<br />' + 'Responses: ' + count
+        : 'Hover over a region!');
 };
 
 info.addTo(map);
