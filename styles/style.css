@@ -162,6 +162,16 @@ li.navitem.right {
 
 /* story response */
 .response {
-    padding-bottom: 30px;
+    padding: 30px;
+    margin-bottom: 30px;
+    background-color: white;
+    border-radius: 10px;
 
+}
+
+.responseInfo {
+    vertical-align: text-top;
+    transform: translateY(-50%);
+    margin: 0;
+    padding: 0;
 }

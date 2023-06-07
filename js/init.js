@@ -1,8 +1,12 @@
-let mapOptions = { 'center': [34.0709, -118.444], 'zoom': 10 }
+// DEFINE GLOBAL VARIABLES
+
+let mapOptions = { 'center': [34.0709, -118.444], 'zoom': 10 };
 const map = L.map('the_map').setView(mapOptions.center, mapOptions.zoom);
 
-let mapPath = "data/ca_zipcodes.geojson"
+const MAP_PATH = "data/ca_zipcodes.geojson"
+const DATA_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCF24Aalv8tZ3neF_4LZQ21KLokn5jtZgpc9-wiAuDhT1_LXNYtxKRtsM-eo0UAzhGUHqQvJCgCNmI/pub?output=csv"
 
+//TODO: make these layers
 let positiveResponses = []
 let negativeResponses = []
 let neutralResponses = []
@@ -14,7 +18,6 @@ let chosenResponses = []
 
 let currentLayer
 
-const dataUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCF24Aalv8tZ3neF_4LZQ21KLokn5jtZgpc9-wiAuDhT1_LXNYtxKRtsM-eo0UAzhGUHqQvJCgCNmI/pub?output=csv"
 
 // change map type
 let Jawg_Light = L.tileLayer('https://{s}.tile.jawg.io/jawg-light/{z}/{x}/{y}{r}.png?access-token={accessToken}', {
@@ -30,35 +33,62 @@ function loadData(url) {
     Papa.parse(url, {
         header: true,
         download: true,
-        complete: results => processData(results)
+        complete: results => processData(results.data)
     })
 }
 
-function processData(results) {
-    chosenResponses = []
-    console.log(results)
-    results.data.forEach(data => {
-            console.log(data)
-            filterResponseData(data)
-        })
-    
-        // TODO: add filter checkbox/buttons and get proper responses 
-    chosenResponses = positiveResponses.concat(negativeResponses, neutralResponses)
-    getBoundary(mapPath, chosenResponses)
+/**
+ * Handle the highlight of the features
+ * @param {*} e : event
+ */
+function highlightFeature(e) {
+    let layer = e.target;
+    layer.bringToFront();
+    info.update(layer.feature.properties);
 }
 
-function filterResponseData(data) {
-    let userZipcode = data['What is the zip code of your primary home?']
-    let userExperience = data['Overall, what would you rate your work life balance?']
-    let caregiver = data['Are you the primary caregiver of a dependent in your household?']
-        // TODO: add more details as needed 
+function resetHighlight(e) {
+    currentLayer.resetStyle(e.target);
+    info.update();
+}
+
+/**
+ * Prepare
+ * @param {*} results 
+ */
+function processData(data) {
+    console.log("Data Length: " + data.length);
+    data.forEach(column => {
+            console.log(column)
+            parseResponseData(column)
+        });
+
+    // TODO: LAYERS!!!!! add filter checkbox/buttons and get proper responses 
+    chosenResponses = positiveResponses.concat(negativeResponses, neutralResponses);
+    getBoundary(MAP_PATH, chosenResponses);
+}
+
+/**
+ * Helper for processData, which adds responses to layers 
+ * @param {*} data, JSON data: list
+ */
+function parseResponseData(data) {
+    let userZipcode = data['What is the zip code of your primary home?'];
+    let userExperience = data['Overall, what would you rate your work life balance?'];
+    let caregiver = data['Are you the primary caregiver of a dependent in your household?'];
+    let WLBStory = data['How is your work life balance affected by the way you commute?'];
+    let household = data['How many people are in your household?'];
+    let commuteMeans = data['How do you typically travel to and from campus?']
+    // TODO: add more details as needed 
     let userResponse = {
         "zipcode": userZipcode,
-        "commuteMeans": data['How do you typically travel to and from campus?'],
+        "commuteMeans": commuteMeans,
         "caregiver": caregiver,
-        "household": data['How many people are in your household?'],
-        "WLBStory": data['How is your work life balance affected by the way you commute?'],
-    }
+        "household": household,
+        "WLBStory": WLBStory,
+        "experience": userExperience,
+    };
+    // LAYERS
     if (userExperience.includes("Positive")) {
         console.log("positive")
         positiveResponses.push(userResponse)
@@ -69,55 +99,61 @@ function filterResponseData(data) {
         console.log("neutral")
         neutralResponses.push(userResponse)
     }
-
     // TODO: Caregiver responses
 }
 
-// mapping by zipcode
+/**
+ * TODO: NEEDS REFACTOR
+ * Helper for getBoundary, which determines the color and style of the map boundary
+ * @param {*} feature, a JSON data list member 
+ * @returns style depending on responseNumber 
+ */
+function getStyle(feature) {
+    let currentZipcode = feature.properties.zcta;
+    let count = getResponseNumber(currentZipcode);
+    if (count > 0)
+    {
+        return{
+            fillColor: getColor(count),
+            weight: 1,
+            color: '#666',
+            dashArray: '',
+            fillOpacity: 0.7
+        } 
+    }
+    else{
+        return {
+            fillColor: "#efefef",
+            opacity: 0
+        }
+    }
+}
+
+/**
+ * gets Boundary mapping given map URL (map) zipcode
+ * @param {*} mapPath, URL path to map
+ * @param {*} chosenResponses,  
+ */
 function getBoundary(mapPath, chosenResponses) {
     fetch(mapPath)
         .then(response => {
             return response.json();
         })
         .then(data => {
-            function getStyle(currentZipcode) {
-                let count = getResponseNumber(currentZipcode);
-                if (count > 0)
-                {
-                    return{
-                        fillColor: getColor(count),
-                        weight: 1,
-                        color: '#666',
-                        dashArray: '',
-                        fillOpacity: 0.7
-                    } 
-                }
-                else{
-                    return {
-                        fillColor: "#efefef",
-                        opacity: 0
-                    }
-                }
-            }
-
-            function style(feature) {
-                return getStyle(feature.properties.zcta)
-            }
             currentLayer = L.geoJSON(data, {
-                style: style,
+                style: getStyle,
                 onEachFeature: onEachFeatureClosure(chosenResponses)
             }).addTo(map)
         })
 }
 
-function getResponseNumber(currentZipcode){
-    let count = 0
-    for (let i = 0; i < chosenResponses.length; i++) {
-        if (chosenResponses[i].zipcode == currentZipcode) {
-            count++;
-        }
-    }
-    return count
+/**
+ * Helper, filters responses by mathcing zipcode
+ * @param {*} currentZipcode zipcode which you want to highlight
+ * @returns returns responses filtered for matching zipcode
+ */
+function getResponseNumber(zip){
+    return chosenResponses.filter(member => member.zipcode === zip).length;
 }
 
 // TODO: Change the scale as we get more responses
@@ -134,8 +170,9 @@ function getColor(d) {
            null
 }
 
+
 function onEachFeatureClosure(chosenResponses) {
-    return function onEachFeature(feature, layer) {
+    return (feature, layer) => {
         let responsesByZipcode = []
         chosenResponses.forEach(response => {
             if (response.zipcode == feature.properties.zcta) {
@@ -150,20 +187,9 @@ function onEachFeatureClosure(chosenResponses) {
     }
 }
 
-function highlightFeature(e) {
-    var layer = e.target;
-    layer.bringToFront();
-    info.update(layer.feature.properties);
-}
-
-function resetHighlight(e) {
-    currentLayer.resetStyle(e.target);
-    info.update();
-}
-
 // TODO: make changes to sidebar here
 function populateSidebar(responsesByZipcode) {
-    return function onRegionClick(e) {
+    return (e) => {
         let layer = e.target
         if(responsesByZipcode.length != 0)
         {
@@ -186,11 +212,9 @@ function populateSidebar(responsesByZipcode) {
     }
 }
 
-loadData(dataUrl)
-
 // Add info for mouse hovering 
-var info = L.control();
-info.onAdd = function (map) {
+let info = L.control();
+info.onAdd = function () {
     this._div = L.DomUtil.create('div', 'info'); 
     this.update();
     return this._div;
@@ -198,8 +222,7 @@ info.onAdd = function (map) {
 
 info.update = function (props) {
     let count = 0
-    if(props)
-    {
+    if(props){
         count = getResponseNumber(props.zcta)
     }
     this._div.innerHTML = 
@@ -212,13 +235,12 @@ info.addTo(map);
 
 // add legend
 // TODO: change the scale as we receive more responses
-var legend = L.control({position: 'bottomleft'});
+let legend = L.control({position: 'bottomleft'});
 
-legend.onAdd = function (map) {
-    var div = L.DomUtil.create('div', 'info legend'),
-        grades = [1,2], // change here
-        labels = [];
-    for (var i = 0; i < grades.length; i++) {
+legend.onAdd = function () {
+    let div = L.DomUtil.create('div', 'info legend');
+    let grades = [1,2]; // change here
+    for (let i = 0; i < grades.length; i++) {
         div.innerHTML +=
             '<i style="background:' + 
             getColor(grades[i] ) 
@@ -229,6 +251,9 @@ legend.onAdd = function (map) {
     return div;
 };
 
+
+// EXECUTE THIS CODE
+loadData(DATA_URL)
 // TODO: add UCLA marker with custom design
 
 // TODO: Calculate distance from UCLA
