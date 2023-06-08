@@ -52,12 +52,22 @@ header {
 }
 
 #the_map {
-    height: 80vh;
+    height:80vh;
     grid-area: main_map;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+    align-items: center;
+    justify-items: right;  
 }
 
-#theSurvey {
-    grid-area: survey;
+#legend{
+    z-index: 9999;
+    background-color: white;
+    padding: 10px;    
+    grid-column: 1 / span 3;
+    grid-row: 1;
+    font-size: x-small;
 }
 
 #placeForButtons {

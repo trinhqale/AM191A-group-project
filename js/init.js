@@ -17,9 +17,9 @@ let negativeLayer = L.featureGroup()
 let neutralLayer = L.featureGroup()
 
 // whether to display experience on sidebar
-let displayPositiveResponses = true
-let displayNegativeResponses = true
-let displayNeutralResponses = true
+let displayPositiveResponses = !map.hasLayer(positiveLayer)
+let displayNegativeResponses = !map.hasLayer(negativeLayer)
+let displayNeutralResponses = !map.hasLayer(neutralLayer)
 
 
 // change map type
@@ -54,7 +54,17 @@ function processData(data) {
             allResponses.push(userResponse)
         });
     getBoundary(MAP_PATH, allResponses);
-    
+    // map bounds
+    let latlngs = []
+    allResponses.forEach(response=>{
+        console.log(response.zipcode.length)
+        // if zipcode is valid (aka not empty)
+        if(response.zipcode.length > 0)
+        {
+            latlngs.push([response.latlng])
+        }
+    })
+    map.fitBounds(latlngs);
 }
 
 /**
@@ -68,6 +78,8 @@ function getUserResponseData(data) {
     let WLBStory = data['How is your work life balance affected by the way you commute?'];
     let household = data['How many people are in your household?'];
     let commuteMeans = data['How do you typically travel to and from campus?']
+    let latlng = [data['lat'], data['lng']]
+    // TODO: Calculate distance from UCLA here
     // TODO: add more details as needed 
     let userResponse = {
         "zipcode": userZipcode,
@@ -76,6 +88,7 @@ function getUserResponseData(data) {
         "household": household,
         "WLBStory": WLBStory,
         "experience": userExperience,
+        "latlng" : latlng
     };
     return userResponse
 }
@@ -241,7 +254,7 @@ function resetHighlight(e) {
 function populateSidebar(e) {
         let layer = e.target
         console.log(layer)
-        map.fitBounds(layer.getBounds());
+        // map.fitBounds(layer.getBounds());
         document.getElementById("stories").innerHTML = ""
 
         // todo: maybe refactor to a function that returns a response 
@@ -293,7 +306,7 @@ function populateSidebar(e) {
 }
 
 // Add info for mouse hovering 
-let info = L.control({position : "bottomleft"});
+let info = L.control({position : "bottomright"});
 info.onAdd = function () {
     this._div = L.DomUtil.create('div', 'info'); 
     this.update();
@@ -346,8 +359,6 @@ info.addTo(map);
 // EXECUTE THIS CODE
 loadData(DATA_URL)
 // TODO: add UCLA marker with custom design
-
-// TODO: Calculate distance from UCLA
 
 // Toggle Layers
 postiveResponsesLegendHtml.addEventListener("click", togglePositiveLayer) 
