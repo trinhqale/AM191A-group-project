@@ -6,17 +6,20 @@ const map = L.map('the_map').setView(mapOptions.center, mapOptions.zoom);
 const MAP_PATH = "data/ca_zipcodes.geojson"
 const DATA_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCF24Aalv8tZ3neF_4LZQ21KLokn5jtZgpc9-wiAuDhT1_LXNYtxKRtsM-eo0UAzhGUHqQvJCgCNmI/pub?output=csv"
 
-//TODO: make these layers
-let positiveResponses = []
-let negativeResponses = []
-let neutralResponses = []
+// checkboxes for user rating
+const postiveResponsesLegendHtml = document.getElementById("positiveCheckbox");
+const negativeResponsesLegendHtml = document.getElementById("negativeCheckbox");
+const neutralResponsesLegendHtml = document.getElementById("neutralCheckbox");
 
-let caregiverResponses = []
-let noncaregiverResponses = []
+// Layers
+let positiveLayer = L.featureGroup()
+let negativeLayer = L.featureGroup()
+let neutralLayer = L.featureGroup()
 
-let chosenResponses = []
-
-let currentLayer
+// whether to display experience on sidebar
+let displayPositiveResponses = true
+let displayNegativeResponses = true
+let displayNeutralResponses = true
 
 
 // change map type
@@ -37,42 +40,28 @@ function loadData(url) {
     })
 }
 
-/**
- * Handle the highlight of the features
- * @param {*} e : event
- */
-function highlightFeature(e) {
-    let layer = e.target;
-    layer.bringToFront();
-    info.update(layer.feature.properties);
-}
-
-function resetHighlight(e) {
-    currentLayer.resetStyle(e.target);
-    info.update();
-}
 
 /**
  * Prepare
  * @param {*} results 
  */
 function processData(data) {
+    let allResponses = []
     console.log("Data Length: " + data.length);
     data.forEach(column => {
             console.log(column)
-            parseResponseData(column)
+            let userResponse = getUserResponseData(column)
+            allResponses.push(userResponse)
         });
-
-    // TODO: LAYERS!!!!! add filter checkbox/buttons and get proper responses 
-    chosenResponses = positiveResponses.concat(negativeResponses, neutralResponses);
-    getBoundary(MAP_PATH, chosenResponses);
+    getBoundary(MAP_PATH, allResponses);
+    
 }
 
 /**
  * Helper for processData, which adds responses to layers 
  * @param {*} data, JSON data: list
  */
-function parseResponseData(data) {
+function getUserResponseData(data) {
     let userZipcode = data['What is the zip code of your primary home?'];
     let userExperience = data['Overall, what would you rate your work life balance?'];
     let caregiver = data['Are you the primary caregiver of a dependent in your household?'];
@@ -88,117 +77,191 @@ function parseResponseData(data) {
         "WLBStory": WLBStory,
         "experience": userExperience,
     };
-    // LAYERS
-    if (userExperience.includes("Positive")) {
-        console.log("positive")
-        positiveResponses.push(userResponse)
-    } else if (userExperience.includes("Negative")) {
-        console.log("negative")
-        negativeResponses.push(userResponse)
-    } else if (userExperience.includes("Neutral")) {
-        console.log("neutral")
-        neutralResponses.push(userResponse)
-    }
-    // TODO: Caregiver responses
+    return userResponse
 }
 
-/**
- * TODO: NEEDS REFACTOR
- * Helper for getBoundary, which determines the color and style of the map boundary
- * @param {*} feature, a JSON data list member 
- * @returns style depending on responseNumber 
- */
-function getStyle(feature) {
-    let currentZipcode = feature.properties.zcta;
-    let count = getResponseNumber(currentZipcode);
-    if (count > 0)
-    {
-        return{
-            fillColor: getColor(count),
-            weight: 1,
-            color: '#666',
-            dashArray: '',
-            fillOpacity: 0.7
-        } 
-    }
-    else{
-        return {
-            fillColor: "#efefef",
-            opacity: 0
-        }
-    }
-}
 
 /**
  * gets Boundary mapping given map URL (map) zipcode
  * @param {*} mapPath, URL path to map
- * @param {*} chosenResponses,  
+ * @param {*} allResponses, Array contains all user responses 
  */
-function getBoundary(mapPath, chosenResponses) {
+function getBoundary(mapPath, allResponses) {
     fetch(mapPath)
         .then(response => {
             return response.json();
         })
         .then(data => {
-            currentLayer = L.geoJSON(data, {
+            // create a customized geojson that includes user responses filtered by rating
+            // add more if needed 
+
+            let filteredGeoJson = {
+                "type": "FeatureCollection",
+                "features" : []
+            }
+            data.features.forEach(feature =>{
+                allResponses.forEach(response=>{
+                    if(response.zipcode == feature.properties.zcta)
+                    {
+                        let customizedFeature = {
+                            "type": "Feature",
+                            "properties": {
+                                "zcta": feature.properties.zcta, 
+                                "latitude": feature.properties.latitude, 
+                                "longitude": feature.properties.longitude,
+                                "positiveResponses" : [],
+                                "negativeResponses" : [],
+                                "neutralResponses" : [],
+                            },
+                            "geometry": {
+                                "type": "Polygon",
+                                "coordinates": feature.geometry.coordinates
+                            },
+                        }
+                        // add positive/negative/neutral response to geojson
+                        if(response.experience.includes("Positive"))
+                        {
+                            customizedFeature.properties.positiveResponses.push(response)
+                        }
+                        else if (response.experience.includes("Negative"))
+                        {
+                            customizedFeature.properties.negativeResponses.push(response)
+                        }
+                        else if(response.experience.includes("Neutral"))
+                        {
+                            customizedFeature.properties.neutralResponses.push(response)
+                        }
+                        // append current feature to geojson
+                        filteredGeoJson.features.push(customizedFeature)
+                    }
+                })
+            })
+
+            //Layers by user experience
+            positiveLayer = L.geoJSON(filteredGeoJson, {
                 style: getStyle,
-                onEachFeature: onEachFeatureClosure(chosenResponses)
+                onEachFeature: onEachFeature,
+                filter: function (feature, layer){
+                    return (feature.properties.positiveResponses.length > 0)
+                }
+            }).addTo(map)
+
+            negativeLayer = L.geoJSON(filteredGeoJson, {
+                style: getStyle,
+                onEachFeature: onEachFeature,
+                filter: function (feature, layer){
+                    return (feature.properties.negativeResponses.length > 0)
+                }
+            }).addTo(map)
+
+            neutralLayer = L.geoJSON(filteredGeoJson, {
+                style: getStyle,
+                onEachFeature: onEachFeature,
+                filter: function (feature, layer){
+                    return (feature.properties.neutralResponses.length > 0)
+                }
             }).addTo(map)
         })
 }
+
+
 
 /**
  * Helper, filters responses by mathcing zipcode
  * @param {*} currentZipcode zipcode which you want to highlight
  * @returns returns responses filtered for matching zipcode
  */
-function getResponseNumber(zip){
-    return chosenResponses.filter(member => member.zipcode === zip).length;
+
+function getStyle(feature) {
+    console.log(feature)
+    let score = getScoreForRegion(feature);
+        return {
+            fillColor: getColorFromScore(score),
+            weight: 1,
+            color: '#666',
+            dashArray: '',
+            fillOpacity: 0.7
+        }
 }
 
-// TODO: Change the scale as we get more responses
+
+function getScoreForRegion(feature)
+{
+    let plusScore = feature.properties.positiveResponses.length 
+    let minusScore = feature.properties.negativeResponses.length
+    return plusScore - minusScore
+}
+
+// TODO: May need to come up with new color gradient
 // TODO: Change the colors as you like at https://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3 (Ctrl + Click)
-function getColor(d) {
-    // return d >= 5 ? '#b30000' :
-    //        d >= 4 ? '#e34a33' :
-    //        d >= 3 ? '#fc8d59' :
-    //        d >= 2 ? '#fdbb84' :
-    //        d >= 1 ? '#fdd49e' :
-    //                 '#fef0d9' ;
-    return d >= 2 ?  '#e34a33':
-           d >= 1 ? '#fdbb84' :
-           null
+function getColorFromScore(score) {
+    if (score >= 2) {
+        return '#b30000';
+    }
+    if (score >= 1) {
+        return '#e34a50';
+    }
+    if (score >= 0) {
+        return '#e34a33';
+    }
+    if (score >= -1) {
+        return '#fc8d59';
+    }
+    if (score >= -2) {
+        return '#fdbb84';
+    }
+    return '#f00088';
 }
 
 
-function onEachFeatureClosure(chosenResponses) {
-    return (feature, layer) => {
-        let responsesByZipcode = []
-        chosenResponses.forEach(response => {
-            if (response.zipcode == feature.properties.zcta) {
-                responsesByZipcode.push(response)
-            }
-        })
-        layer.on({
-            mouseover: highlightFeature,
-            mouseout: resetHighlight,
-            click: populateSidebar(responsesByZipcode)
-        });
-    }
+function onEachFeature(feature, layer) {
+    layer.on({
+        mouseover: highlightFeature,
+        mouseout: resetHighlight,
+        click: populateSidebar
+    });
+}
+
+
+/**
+ * Handle the highlight of the features
+ * @param {*} e : event
+ */
+function highlightFeature(e) {
+    let layer = e.target;
+    layer.bringToFront();
+    info.update(layer.feature.properties);
+}
+
+function resetHighlight(e) {
+    info.update();
 }
 
 // TODO: make changes to sidebar here
-function populateSidebar(responsesByZipcode) {
-    return (e) => {
+function populateSidebar(e) {
         let layer = e.target
-        if(responsesByZipcode.length != 0)
-        {
-            map.fitBounds(layer.getBounds());
-            document.getElementById("stories").innerHTML = ""
-            console.log(responsesByZipcode)
+        console.log(layer)
+        map.fitBounds(layer.getBounds());
+        document.getElementById("stories").innerHTML = ""
 
-            // add if statement to sort through caregiver vs not to include caregiver question
-            responsesByZipcode.forEach(response => {
+        // todo: maybe refactor to a function that returns a response 
+        if(displayPositiveResponses)
+        {
+            layer.feature.properties.positiveResponses.forEach(response => {
+            document.getElementById("stories").innerHTML += 
+            `<div class="response"> 
+                <img src='assets/home-icon.png'> ${response.zipcode} <br>
+                <img src='assets/bus-icon.png'> ${response.commuteMeans} <br> 
+                <img src='assets/caregiver-icon.png'> Caregiver: ${response.caregiver} <br> 
+                Household: ${response.household} <br> <br>
+                <b>How is your work life balance affected by the way you commute?</b> <br> ${response.WLBStory} 
+            </div>`
+            })
+            // TODO: if caregiver goes here
+        }
+        if(displayNegativeResponses)
+        {
+            layer.feature.properties.negativeResponses.forEach(response => {
                 document.getElementById("stories").innerHTML += 
                 `<div class="response"> 
                     <img src='assets/home-icon.png'> ${response.zipcode} <br>
@@ -208,12 +271,29 @@ function populateSidebar(responsesByZipcode) {
                     <b>How is your work life balance affected by the way you commute?</b> <br> ${response.WLBStory} 
                 </div>`
             })
+            // TODO: if caregiver goes here
         }
-    }
+        
+        if(displayNeutralResponses)
+        {
+            layer.feature.properties.neutralResponses.forEach(response => {
+                document.getElementById("stories").innerHTML += 
+                `<div class="response"> 
+                    <img src='assets/home-icon.png'> ${response.zipcode} <br>
+                    <img src='assets/bus-icon.png'> ${response.commuteMeans} <br> 
+                    <img src='assets/caregiver-icon.png'> Caregiver: ${response.caregiver} <br> 
+                    Household: ${response.household} <br> <br>
+                    <b>How is your work life balance affected by the way you commute?</b> <br> ${response.WLBStory} 
+                </div>`
+            })
+            // TODO: if caregiver goes here 
+        } 
+
+        
 }
 
 // Add info for mouse hovering 
-let info = L.control();
+let info = L.control({position : "bottomleft"});
 info.onAdd = function () {
     this._div = L.DomUtil.create('div', 'info'); 
     this.update();
@@ -221,35 +301,46 @@ info.onAdd = function () {
 };
 
 info.update = function (props) {
-    let count = 0
-    if(props){
-        count = getResponseNumber(props.zcta)
-    }
+    console.log(props)
+    if(props)
+    {
+    let positiveCount = props.positiveResponses.length
+    let negativeCount = props.negativeResponses.length
+    let neutralCount = props.neutralResponses.length
+    let totalCount = positiveCount + negativeCount + neutralCount
     this._div.innerHTML = 
-        '<h4>Responses by Zipcode</h4>' +  ((props && count != 0) ?
-        '<img src="assets/home-icon.png"> Zipcode: ' + props.zcta + '<br />' + 'Responses: ' + count
-        : 'Hover over a region!');
+        '<h4>Experience by Zipcode</h4>' + 
+        '<img src="assets/home-icon.png"> Zipcode: ' + props.zcta + '<br />' + 'Total Responses: ' + totalCount 
+        + '<br />' + 'Positive Experience: ' + positiveCount
+        + '<br />' + 'Negative Experience: ' + negativeCount
+        + '<br />' + 'Neutral Experience: ' + neutralCount
+    }
+    else
+    {
+        this._div.innerHTML = `Hover over a region to see<br>work-life balance<br>rating by zipcode!`;
+        
+    }
 };
 
 info.addTo(map);
 
+// TODO: Saved for later, maybe we don't need this 
 // add legend
 // TODO: change the scale as we receive more responses
-let legend = L.control({position: 'bottomleft'});
+// let legend = L.control({position: 'bottomleft'});
 
-legend.onAdd = function () {
-    let div = L.DomUtil.create('div', 'info legend');
-    let grades = [1,2]; // change here
-    for (let i = 0; i < grades.length; i++) {
-        div.innerHTML +=
-            '<i style="background:' + 
-            getColor(grades[i] ) 
-            + '"></i> '  + (grades[i]) + '<br>';
-    }
-    console.log("Color: ", getColor(grades[i] + 1))
-
-    return div;
-};
+// legend.onAdd = function () {
+//     let div = L.DomUtil.create('div', 'info legend');
+//     let grades = [1,2]; // change here
+//     for (let i = 0; i < grades.length; i++) {
+//         div.innerHTML +=
+//             '<i style="background:' + 
+//             getColor(grades[i] ) 
+//             + '"></i> '  + (grades[i]) + '<br>';
+//     }
+//     return div;
+// };
+// legend.addTo(map);
 
 
 // EXECUTE THIS CODE
@@ -257,4 +348,43 @@ loadData(DATA_URL)
 // TODO: add UCLA marker with custom design
 
 // TODO: Calculate distance from UCLA
-legend.addTo(map);
+
+// Toggle Layers
+postiveResponsesLegendHtml.addEventListener("click", togglePositiveLayer) 
+
+function togglePositiveLayer(){
+    if(map.hasLayer(positiveLayer)){
+        map.removeLayer(positiveLayer)
+    }
+    else{
+        map.addLayer(positiveLayer)
+    }
+    // whether to show positive exp in sidebar
+    displayPositiveResponses = !displayPositiveResponses
+}
+
+negativeResponsesLegendHtml.addEventListener("click", toggleNegativeLayer) 
+
+function toggleNegativeLayer(){
+    if(map.hasLayer(negativeLayer)){
+        map.removeLayer(negativeLayer)
+    }
+    else{
+        map.addLayer(negativeLayer)
+    }
+    // whether to show negative exp in sidebar
+    displayNegativeResponses = !displayNegativeResponses
+}
+
+neutralResponsesLegendHtml.addEventListener("click", toggleNeutralLayer) 
+
+function toggleNeutralLayer(){
+    if(map.hasLayer(neutralLayer)){
+        map.removeLayer(neutralLayer)
+    }
+    else{
+        map.addLayer(neutralLayer)
+    }
+    // whether to show neutral exp in sidebar
+    displayNeutralResponses = !displayNeutralResponses
+}

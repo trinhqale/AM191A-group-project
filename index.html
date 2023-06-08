@@ -47,7 +47,36 @@
             <p style="text-align:center;">Click on a region to read different stories!</p>
         </div>
         <div id="content">
-            <div id="the_map"></div>
+            <div id="the_map">
+                <div id="legend"> <h2 style="text-align: center;">Legend</h2>
+                    <div id="positiveLegendHTML" >
+                        <input type="checkbox" id="positiveCheckbox" checked>
+                        <label for="positiveCheckbox">
+                            positive
+                            <svg height='10' width='10'>
+                                <circle cx='5' cy='5' r='4' fill='#724993'/>
+                            </svg>
+                        </label>
+                    </div>
+                    <div id="neutralLegendHTML">
+                        <input type="checkbox" id="neutralCheckbox" checked>
+                        <label for="neutralCheckbox">
+                            neutral <svg height='10' width='10'><circle cx='5' cy='5' r='4' fill='#496B93'/>
+                            </svg>
+                            
+                        </label>
+                    </div>
+                    <div id="negativeLegendHTML" >
+                        <input type="checkbox" id="negativeCheckbox" checked>
+                        <label for="negativeCheckbox">
+                            negative
+                            <svg height='10' width='10'>
+                                <circle cx='5' cy='5' r='4' fill='#724993'/>
+                            </svg>
+                        </label>
+                    </div>
+                </div>
+            </div>
             
             <div id="sidebar">
                 <div id="stories">

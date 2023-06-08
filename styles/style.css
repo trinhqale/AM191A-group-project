@@ -175,3 +175,10 @@ li.navitem.right {
     margin: 0;
     padding: 0;
 }
+
+#legend {
+    z-index: 1000;
+    position: relative;
+    background-color: #F7F6F3;
+    width: 100px;
+}
