@@ -17,9 +17,9 @@ let negativeLayer = L.featureGroup()
 let neutralLayer = L.featureGroup()
 
 // whether to display experience on sidebar
-let displayPositiveResponses = !map.hasLayer(positiveLayer)
-let displayNegativeResponses = !map.hasLayer(negativeLayer)
-let displayNeutralResponses = !map.hasLayer(neutralLayer)
+let displayPositiveResponses = true
+let displayNegativeResponses = true
+let displayNeutralResponses = true
 
 
 // change map type
