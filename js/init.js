@@ -7,20 +7,31 @@ const MAP_PATH = "data/ca_zipcodes.geojson"
 const DATA_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCF24Aalv8tZ3neF_4LZQ21KLokn5jtZgpc9-wiAuDhT1_LXNYtxKRtsM-eo0UAzhGUHqQvJCgCNmI/pub?output=csv"
 
 // checkboxes for user rating
-const postiveResponsesLegendHtml = document.getElementById("positiveCheckbox");
+const positiveResponsesLegendHtml = document.getElementById("positiveCheckbox");
 const negativeResponsesLegendHtml = document.getElementById("negativeCheckbox");
 const neutralResponsesLegendHtml = document.getElementById("neutralCheckbox");
 
+//checkboxes for caregiver
+const caregiverHTML = document.getElementById("caregiverCheckbox")
+const nonCaregiverHTML = document.getElementById("nonCaregiverCheckbox")
+
 // Layers
-let positiveLayer = L.featureGroup()
-let negativeLayer = L.featureGroup()
-let neutralLayer = L.featureGroup()
+// care = caregiver, noncare = non-caregiver
+let carePositiveLayer = L.featureGroup()
+let careNegativeLayer = L.featureGroup()
+let careNeutralLayer = L.featureGroup()
+let noncarePositiveLayer = L.featureGroup()
+let noncareNegativeLayer = L.featureGroup()
+let noncareNeutralLayer = L.featureGroup()
 
 // whether to display experience on sidebar
 let displayPositiveResponses = true
 let displayNegativeResponses = true
 let displayNeutralResponses = true
 
+// whether to display caregiver or non-caregiver
+let displayCaregiver = true
+let displayNonCaregiver = true
 
 // change map type
 let Jawg_Light = L.tileLayer('https://{s}.tile.jawg.io/jawg-light/{z}/{x}/{y}{r}.png?access-token={accessToken}', {
@@ -78,6 +89,7 @@ function getUserResponseData(data) {
     let WLBStory = data['How is your work life balance affected by the way you commute?'];
     let household = data['How many people are in your household?'];
     let commuteMeans = data['How do you typically travel to and from campus?']
+    let caregiverStory = data['How do your family responsibilities impact your commute?'];
     let latlng = [data['lat'], data['lng']]
     // TODO: Calculate distance from UCLA here
     // TODO: add more details as needed 
@@ -87,6 +99,7 @@ function getUserResponseData(data) {
         "caregiver": caregiver,
         "household": household,
         "WLBStory": WLBStory,
+        "caregiverStory": caregiverStory,
         "experience": userExperience,
         "latlng" : latlng
     };
@@ -105,32 +118,44 @@ function getBoundary(mapPath, allResponses) {
             return response.json();
         })
         .then(data => {
-            // create a customized geojson that includes user responses filtered by rating
-            // add more if needed 
-
-            let filteredGeoJson = {
+            // create multiple customized geojson that includes user responses filtered by caregiver
+            // add more if needed
+            let allResponsesGeoJson= {
                 "type": "FeatureCollection",
                 "features" : []
             }
+            let caregiverGeoJson = {
+                "type": "FeatureCollection",
+                "features" : []
+            }
+            let nonCaregiverGeoJson = {
+                "type": "FeatureCollection",
+                "features" : []
+            }
+            zipcodeList = []
             data.features.forEach(feature =>{
+                let addFeature = false
+                let customizedFeature = {
+                    "type": "Feature",
+                    "properties": {
+                        "zcta": feature.properties.zcta, 
+                        "latitude": feature.properties.latitude, 
+                        "longitude": feature.properties.longitude,
+                        "positiveResponses" : [],
+                        "negativeResponses" : [],
+                        "neutralResponses" : [],
+                        "caregiverResponses" : [],
+                        "nonCaregiverResponses" : [],
+                    },
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": feature.geometry.coordinates
+                    },
+                }
                 allResponses.forEach(response=>{
                     if(response.zipcode == feature.properties.zcta)
                     {
-                        let customizedFeature = {
-                            "type": "Feature",
-                            "properties": {
-                                "zcta": feature.properties.zcta, 
-                                "latitude": feature.properties.latitude, 
-                                "longitude": feature.properties.longitude,
-                                "positiveResponses" : [],
-                                "negativeResponses" : [],
-                                "neutralResponses" : [],
-                            },
-                            "geometry": {
-                                "type": "Polygon",
-                                "coordinates": feature.geometry.coordinates
-                            },
-                        }
+                        addFeature = true
                         // add positive/negative/neutral response to geojson
                         if(response.experience.includes("Positive"))
                         {
@@ -145,35 +170,75 @@ function getBoundary(mapPath, allResponses) {
                             customizedFeature.properties.neutralResponses.push(response)
                         }
                         // append current feature to geojson
-                        filteredGeoJson.features.push(customizedFeature)
+                        if(response.caregiver == "Yes")
+                        {
+                            customizedFeature.properties.caregiverResponses.push(response)
+                        }
+                        else if (response.caregiver == "No")
+                        {
+                            customizedFeature.properties.nonCaregiverResponses.push(response)
+                        }
                     }
                 })
+                if(addFeature)
+                    allResponsesGeoJson.features.push(customizedFeature)
             })
+            console.log(allResponsesGeoJson.features)
+            // let carePositiveLayer = L.featureGroup()
+            // let careNegativeLayer = L.featureGroup()
+            // let careNeutralLayer = L.featureGroup()
+            // let noncarePositiveLayer = L.featureGroup()
+            // let noncareNegativeLayer = L.featureGroup()
+            // let noncareNeutralLayer = L.featureGroup()
 
-            //Layers by user experience
-            positiveLayer = L.geoJSON(filteredGeoJson, {
+            carePositiveLayer = L.geoJSON(allResponsesGeoJson, {
                 style: getStyle,
                 onEachFeature: onEachFeature,
                 filter: function (feature, layer){
-                    return (feature.properties.positiveResponses.length > 0)
+                    return (feature.properties.caregiverResponses.length > 0 && feature.properties.positiveResponses.length > 0)
                 }
             }).addTo(map)
 
-            negativeLayer = L.geoJSON(filteredGeoJson, {
+            careNegativeLayer = L.geoJSON(allResponsesGeoJson, {
                 style: getStyle,
                 onEachFeature: onEachFeature,
                 filter: function (feature, layer){
-                    return (feature.properties.negativeResponses.length > 0)
+                    return (feature.properties.caregiverResponses.length > 0 && feature.properties.negativeResponses.length > 0)
+                }
+            }).addTo(map)
+            
+            careNeutralLayer = L.geoJSON(allResponsesGeoJson, {
+                style: getStyle,
+                onEachFeature: onEachFeature,
+                filter: function (feature, layer){
+                    return (feature.properties.caregiverResponses.length > 0 && feature.properties.neutralResponses.length > 0)
                 }
             }).addTo(map)
 
-            neutralLayer = L.geoJSON(filteredGeoJson, {
+            noncarePositiveLayer = L.geoJSON(allResponsesGeoJson, {
                 style: getStyle,
                 onEachFeature: onEachFeature,
                 filter: function (feature, layer){
-                    return (feature.properties.neutralResponses.length > 0)
+                    return (feature.properties.nonCaregiverResponses.length > 0 && feature.properties.positiveResponses.length > 0)
                 }
             }).addTo(map)
+
+            noncareNegativeLayer = L.geoJSON(allResponsesGeoJson, {
+                style: getStyle,
+                onEachFeature: onEachFeature,
+                filter: function (feature, layer){
+                    return (feature.properties.nonCaregiverResponses.length > 0 && feature.properties.negativeResponses.length > 0)
+                }
+            }).addTo(map)
+
+            noncareNeutralLayer = L.geoJSON(allResponsesGeoJson, {
+                style: getStyle,
+                onEachFeature: onEachFeature,
+                filter: function (feature, layer){
+                    return (feature.properties.nonCaregiverResponses.length > 0 && feature.properties.neutralResponses.length > 0)
+                }
+            }).addTo(map)
+            
         })
 }
 
@@ -253,13 +318,9 @@ function resetHighlight(e) {
 // TODO: make changes to sidebar here
 function populateSidebar(e) {
         let layer = e.target
-        console.log(layer)
-        // map.fitBounds(layer.getBounds());
         document.getElementById("stories").innerHTML = ""
 
-        // todo: maybe refactor to a function that returns a response 
-        if(displayPositiveResponses)
-        {
+
             layer.feature.properties.positiveResponses.forEach(response => {
             document.getElementById("stories").innerHTML += 
             `<div class="response"> 
@@ -267,13 +328,16 @@ function populateSidebar(e) {
                 <img src='assets/bus-icon.png'> ${response.commuteMeans} <br> 
                 <img src='assets/caregiver-icon.png'> Caregiver: ${response.caregiver} <br> 
                 Household: ${response.household} <br> <br>
-                <b>How is your work life balance affected by the way you commute?</b> <br> ${response.WLBStory} 
-            </div>`
+                <b>How is your work life balance affected by the way you commute?</b> <br> ${response.WLBStory}` 
+                // TODO: if caregiver goes here
+                if (response.caregiver == "Yes")
+                {
+                    document.getElementById("stories").innerHTML += `<br>${response.caregiverStory}`
+                }
+                document.getElementById("stories").innerHTML += `</div>`
             })
-            // TODO: if caregiver goes here
-        }
-        if(displayNegativeResponses)
-        {
+            
+
             layer.feature.properties.negativeResponses.forEach(response => {
                 document.getElementById("stories").innerHTML += 
                 `<div class="response"> 
@@ -285,10 +349,7 @@ function populateSidebar(e) {
                 </div>`
             })
             // TODO: if caregiver goes here
-        }
         
-        if(displayNeutralResponses)
-        {
             layer.feature.properties.neutralResponses.forEach(response => {
                 document.getElementById("stories").innerHTML += 
                 `<div class="response"> 
@@ -300,7 +361,6 @@ function populateSidebar(e) {
                 </div>`
             })
             // TODO: if caregiver goes here 
-        } 
 
         
 }
@@ -361,41 +421,166 @@ loadData(DATA_URL)
 // TODO: add UCLA marker with custom design
 
 // Toggle Layers
-postiveResponsesLegendHtml.addEventListener("click", togglePositiveLayer) 
+positiveResponsesLegendHtml.addEventListener("change", togglePositiveLayer) 
 
 function togglePositiveLayer(){
-    if(map.hasLayer(positiveLayer)){
-        map.removeLayer(positiveLayer)
+    if(positiveResponsesLegendHtml.checked){
+        if (displayCaregiver)
+        {
+            map.addLayer(carePositiveLayer)
+        }
+        if(displayNonCaregiver)
+        {
+            map.addLayer(noncarePositiveLayer)
+        }
+        displayPositiveResponses = true
     }
     else{
-        map.addLayer(positiveLayer)
+        map.removeLayer(carePositiveLayer)
+        map.removeLayer(noncarePositiveLayer)
+        displayPositiveResponses = false
     }
-    // whether to show positive exp in sidebar
-    displayPositiveResponses = !displayPositiveResponses
 }
 
-negativeResponsesLegendHtml.addEventListener("click", toggleNegativeLayer) 
+negativeResponsesLegendHtml.addEventListener("change", toggleNegativeLayer) 
 
 function toggleNegativeLayer(){
-    if(map.hasLayer(negativeLayer)){
-        map.removeLayer(negativeLayer)
+    if(negativeResponsesLegendHtml.checked){
+        if (displayCaregiver)
+        {
+            map.addLayer(careNegativeLayer)
+        }
+        if(displayNonCaregiver)
+        {
+            map.addLayer(noncareNegativeLayer)
+        }
+        displayNegativeResponses = true
     }
     else{
-        map.addLayer(negativeLayer)
+        map.removeLayer(careNegativeLayer)
+        map.removeLayer(noncareNegativeLayer)
+        displayNegativeResponses = false
     }
-    // whether to show negative exp in sidebar
-    displayNegativeResponses = !displayNegativeResponses
 }
 
-neutralResponsesLegendHtml.addEventListener("click", toggleNeutralLayer) 
+neutralResponsesLegendHtml.addEventListener("change", toggleNeutralLayer) 
 
 function toggleNeutralLayer(){
-    if(map.hasLayer(neutralLayer)){
-        map.removeLayer(neutralLayer)
+    if(neutralResponsesLegendHtml.checked){
+        if (displayCaregiver)
+        {
+            map.addLayer(careNeutralLayer)
+        }
+        if(displayNonCaregiver)
+        {
+            map.addLayer(noncareNeutralLayer)
+        }
+        displayNeutralResponses = true
     }
     else{
-        map.addLayer(neutralLayer)
+        map.removeLayer(careNeutralLayer)
+        map.removeLayer(noncareNeutralLayer)
+        displayNeutralResponses = false
     }
-    // whether to show neutral exp in sidebar
-    displayNeutralResponses = !displayNeutralResponses
 }
+
+caregiverHTML.addEventListener("change", toggleCaregiver)
+
+function toggleCaregiver()
+{   
+    if(caregiverHTML.checked)
+    {  
+        console.log("caregiver on")
+        displayCaregiver = true
+        if(displayPositiveResponses)
+        {
+            map.addLayer(carePositiveLayer)
+        }
+        if(displayNegativeResponses)
+        {
+            map.addLayer(careNegativeLayer)
+        }
+        if(displayNeutralResponses)
+        {
+            map.addLayer(careNeutralLayer)
+        }
+    }
+    else
+    {
+        console.log("caregiver off")
+        displayCaregiver = false
+        map.removeLayer(carePositiveLayer)
+        map.removeLayer(careNegativeLayer)
+        map.removeLayer(careNeutralLayer)
+    }
+}
+
+nonCaregiverHTML.addEventListener("change", toggleNonCaregiver)
+
+function toggleNonCaregiver()
+{   
+    if(nonCaregiverHTML.checked)
+    {  
+        console.log("noncaregiver on")
+        displayNonCaregiver = true
+        if(displayPositiveResponses)
+        {
+            map.addLayer(noncarePositiveLayer)
+        }
+        if(displayNegativeResponses)
+        {
+            map.addLayer(noncareNegativeLayer)
+        }
+        if(displayNeutralResponses)
+        {
+            map.addLayer(noncareNeutralLayer)
+        }
+    }
+    else
+    {
+        console.log("noncaregiver off")
+        displayNonCaregiver = false
+        map.removeLayer(noncarePositiveLayer)
+        map.removeLayer(noncareNegativeLayer)
+        map.removeLayer(noncareNeutralLayer)
+    }
+}
+
+// TODO: add UCLA marker with custom design
+var uclaIcon = L.icon({
+    iconUrl: 'assets/ucla.png', // will be replaced by custom icon
+    iconSize: [36, 36],
+    iconAnchor: [18, 36],
+  });
+  
+  // Create the UCLA marker
+  var marker = L.marker([34.0709, -118.444], { icon: uclaIcon }).addTo(map);
+  
+  // Make the icon a circle using CSS properties
+  marker.on('add', function () {
+    var iconElement = marker.getElement();
+    if (iconElement) {
+      iconElement.style.borderRadius = '50%';
+      iconElement.style.width = '36px';
+      iconElement.style.height = '36px';
+    }
+  });
+  
+  map.on('zoomend', function () {
+    var currentZoom = map.getZoom();
+    var updatedIconSize = [36, 36]; // Determine the size of the icon with zoom level
+  
+    // Adjust the icon size based on the current zoom level
+    if (currentZoom >= 10 && currentZoom < 15) {
+      updatedIconSize = [40, 40];
+    } else if (currentZoom >= 15 && currentZoom < 20) {
+      updatedIconSize = [50, 50];
+    } else if (currentZoom >= 20) {
+      updatedIconSize = [60, 60];
+    }
+  
+    // Update the icon size of the marker
+    uclaIcon.options.iconSize = updatedIconSize;
+    marker.setIcon(uclaIcon);
+  });
+  
