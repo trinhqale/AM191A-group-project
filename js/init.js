@@ -15,7 +15,7 @@ const neutralResponsesLegendHtml = document.getElementById("neutralCheckbox");
 const caregiverHTML = document.getElementById("caregiverCheckbox")
 const nonCaregiverHTML = document.getElementById("nonCaregiverCheckbox")
 
-// Layers
+// 6 Layers for displaying different results
 // care = caregiver, noncare = non-caregiver
 let carePositiveLayer = L.featureGroup()
 let careNegativeLayer = L.featureGroup()
@@ -24,7 +24,7 @@ let noncarePositiveLayer = L.featureGroup()
 let noncareNegativeLayer = L.featureGroup()
 let noncareNeutralLayer = L.featureGroup()
 
-// whether to display experience on sidebar
+// whether to display postive/negative/neutral experience 
 let displayPositiveResponses = true
 let displayNegativeResponses = true
 let displayNeutralResponses = true
@@ -118,21 +118,12 @@ function getBoundary(mapPath, allResponses) {
             return response.json();
         })
         .then(data => {
-            // create multiple customized geojson that includes user responses filtered by caregiver
+            // create a customized geojson that only includes areas with responses
             // add more if needed
             let allResponsesGeoJson= {
                 "type": "FeatureCollection",
                 "features" : []
             }
-            let caregiverGeoJson = {
-                "type": "FeatureCollection",
-                "features" : []
-            }
-            let nonCaregiverGeoJson = {
-                "type": "FeatureCollection",
-                "features" : []
-            }
-            zipcodeList = []
             data.features.forEach(feature =>{
                 let addFeature = false
                 let customizedFeature = {
@@ -236,8 +227,6 @@ function getBoundary(mapPath, allResponses) {
         })
 }
 
-
-
 /**
  * Helper, filters responses by mathcing zipcode
  * @param {*} currentZipcode zipcode which you want to highlight
@@ -249,7 +238,7 @@ function getStyle(feature) {
     let score = getScoreForRegion(feature);
         return {
             fillColor: getColorFromScore(score),
-            weight: 1,
+            weight: 0.5,
             color: '#666',
             dashArray: '',
             fillOpacity: 0.7
@@ -261,28 +250,47 @@ function getScoreForRegion(feature)
 {
     let plusScore = feature.properties.positiveResponses.length 
     let minusScore = feature.properties.negativeResponses.length
-    return plusScore - minusScore
+    let neutralScore = feature.properties.neutralResponses.length
+    return (plusScore - minusScore) / (plusScore + minusScore + neutralScore)
 }
 
 // TODO: May need to come up with new color gradient
 // TODO: Change the colors as you like at https://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3 (Ctrl + Click)
 function getColorFromScore(score) {
-    if (score >= 2) {
-        return '#b30000';
+    // some made up scale
+    // -1  -0.33   0     1
+    // if(score >= 0.6)
+    // {
+    //     return "#00FF00"// very positive
+    // }
+    // if(score >= 0.2)
+    // {
+    //     return "#7CFF00"// positive
+    // }
+    // if(score >= -0.2)
+    // {
+    //     return "#FFD700"//neutral
+    // }
+    // if(score >= -0.6)
+    // {
+    //     return "#FF6A00"//negative
+    // }
+    // else {
+    //     return "#FF0000"//very negative
+    // }
+    if(score >= 0.33)
+    {
+        return "green"
     }
-    if (score >= 1) {
-        return '#e34a50';
+    else if(score >= -0.33)
+    {
+        return "yellow"
     }
-    if (score >= 0) {
-        return '#e34a33';
+    else
+    {
+        return "red"
     }
-    if (score >= -1) {
-        return '#fc8d59';
-    }
-    if (score >= -2) {
-        return '#fdbb84';
-    }
-    return '#f00088';
+
 }
 
 
@@ -310,53 +318,90 @@ function resetHighlight(e) {
 }
 
 // TODO: make changes to sidebar here
-// add neg and neutral
 function populateSidebar(e) {
-        let layer = e.target
-        document.getElementById("stories").innerHTML = ""
+    let layer = e.target
+    let storiesHTML = document.getElementById("stories")
+    let displayingResponses = []
+    if(displayPositiveResponses)
+    {
+        displayingResponses = displayingResponses.concat(layer.feature.properties.positiveResponses)
+    }
+    if(displayNegativeResponses)
+    {
+        displayingResponses = displayingResponses.concat(layer.feature.properties.negativeResponses)
+    }
+    if(displayNeutralResponses)
+    {
+        displayingResponses = displayingResponses.concat(layer.feature.properties.neutralResponses)
+    }
 
-
-            layer.feature.properties.positiveResponses.forEach(response => {
-            document.getElementById("stories").innerHTML += 
-            `<div class="response"> 
-                <img src='assets/home-icon.png'> ${response.zipcode} <br>
-                <img src='assets/bus-icon.png'> ${response.commuteMeans} <br> 
-                <img src='assets/caregiver-icon.png'> Caregiver: ${response.caregiver} <br> 
-                Household: ${response.household} <br> <br>
-                <b>How is your work life balance affected by the way you commute?</b> <br> ${response.WLBStory} <br>` 
-                + ((response.caregiver == "Yes")? `<b> How do your family responsibilities impact your commute?</b> <br> ${response.caregiverStory}`: ``)  
-                + `</div>` 
-            })
-            
-
-            layer.feature.properties.negativeResponses.forEach(response => {
-                document.getElementById("stories").innerHTML += 
-                `<div class="response"> 
-                    <img src='assets/home-icon.png'> ${response.zipcode} <br>
-                    <img src='assets/bus-icon.png'> ${response.commuteMeans} <br> 
-                    <img src='assets/caregiver-icon.png'> Caregiver: ${response.caregiver} <br> 
-                    Household: ${response.household} <br> <br>
-                    <b>How is your work life balance affected by the way you commute?</b> <br> ${response.WLBStory} <br>`
-                    + ((response.caregiver == "Yes")? `<b> How do your family responsibilities impact your commute?</b> <br> ${response.caregiverStory}`: ``)  
-                    + `</div>` 
-            })
-        
-            layer.feature.properties.neutralResponses.forEach(response => {
-                document.getElementById("stories").innerHTML += 
-                `<div class="response"> 
-                    <img src='assets/home-icon.png'> ${response.zipcode} <br>
-                    <img src='assets/bus-icon.png'> ${response.commuteMeans} <br> 
-                    <img src='assets/caregiver-icon.png'> Caregiver: ${response.caregiver} <br> 
-                    Household: ${response.household} <br> <br>
-                    <b>How is your work life balance affected by the way you commute?</b> <br> ${response.WLBStory} <br>`
-                    + ((response.caregiver == "Yes")? `<b> How do your family responsibilities impact your commute?</b> <br> ${response.caregiverStory}`: ``)  
-                    + `</div>` 
-            })
-            // TODO: if caregiver goes here 
-
-        
+    // filter responses by caregiver  
+    displayingResponses = displayingResponses.filter(function (response) {
+        console.log("display care: ", displayCaregiver)
+        console.log("current response is a caregiver: ", response.caregiver)
+        if (!displayCaregiver && response.caregiver == "Yes") {
+          return false; 
+        }
+        else if (!displayNonCaregiver && response.caregiver == "No") {
+          return false; 
+        } else {
+          return true; 
+        }
+      });
+    console.log(displayingResponses)
+    
+    // create dynamic buttons
+    let buttonContainer = document.getElementById("transportModes");
+    buttonContainer.innerHTML = ""
+    let commuteList = [] // avoid duplicate buttons
+    // Create buttons and add onClick
+    // Onclick: Get the corresponding response
+    displayingResponses.forEach(response=> {
+        if(commuteList.includes(response.commuteMeans))
+        {
+            return
+        }
+        commuteList.push(response.commuteMeans)
+        let button = document.createElement("button");
+        button.textContent = response.commuteMeans;
+        button.addEventListener("click", function () {
+            console.log("Button clicked: " + response.commuteMeans);
+            let filteredResponses = displayingResponses.filter(res => res.commuteMeans == response.commuteMeans)
+            generateSidebarResponses(storiesHTML, filteredResponses)
+        });
+        buttonContainer.appendChild(button);
+    });
+    generateSidebarResponses(storiesHTML, displayingResponses)
 }
 
+function generateSidebarResponses(sidebarHTML, responses)
+{
+    let style
+    sidebarHTML.innerHTML = ""
+    responses.forEach(response => {
+        if(response.experience.includes("Positive"))
+        {
+            style = `style="background-color: rgb(170, 207, 160)"`
+        }
+        else if(response.experience.includes("Negative"))
+        {
+            style = `style="background-color: rgb(240, 147, 155)"`
+        }
+        else if(response.experience.includes("Neutral"))
+        {
+            style = `style="background-color: yellow)"`
+        }
+        sidebarHTML.innerHTML += 
+        `<div class="response" ${style}> 
+            <img src='assets/home-icon.png'> ${response.zipcode} <br>
+            <img src='assets/bus-icon.png'> ${response.commuteMeans} <br> 
+            <img src='assets/caregiver-icon.png'> Caregiver: ${response.caregiver} <br> 
+            Household: ${response.household} <br> <br>
+            <b>How is your work life balance affected by the way you commute?</b> <br> ${response.WLBStory} <br><br>` 
+            + ((response.caregiver == "Yes")? `<b> How do your family responsibilities impact your commute?</b> <br> ${response.caregiverStory}`: ``)  
+            + `</div>` 
+    })
+}
 // Add info for mouse hovering 
 let info = L.control({position : "bottomright"});
 info.onAdd = function () {
@@ -366,7 +411,6 @@ info.onAdd = function () {
 };
 
 info.update = function (props) {
-    console.log(props)
     if(props)
     {
     let positiveCount = props.positiveResponses.length
@@ -374,15 +418,14 @@ info.update = function (props) {
     let neutralCount = props.neutralResponses.length
     let totalCount = positiveCount + negativeCount + neutralCount
     this._div.innerHTML = 
-        '<h4>Experience by Zipcode</h4>' + 
-        '<img src="assets/home-icon.png"> Zipcode: ' + props.zcta + '<br />' + 'Total Responses: ' + totalCount 
-        + '<br />' + 'Positive Experience: ' + positiveCount
-        + '<br />' + 'Negative Experience: ' + negativeCount
-        + '<br />' + 'Neutral Experience: ' + neutralCount
+        '<h4>Experience by Zipcode</h4>' 
+        + '<img src="assets/home-icon.png"> Zipcode: ' + props.zcta + '<br />' 
+        + 'Distance to UCLA: ' + '<br>'
+        + 'Total Responses: ' + totalCount 
     }
     else
     {
-        this._div.innerHTML = `Hover over a region to see<br>work-life balance<br>rating by zipcode!`;
+        this._div.innerHTML = `Hover over a region to see <br>a summary of the zipcode!`;
         
     }
 };
@@ -392,20 +435,23 @@ info.addTo(map);
 // TODO: Saved for later, maybe we don't need this 
 // add legend
 // TODO: change the scale as we receive more responses
-// let legend = L.control({position: 'bottomleft'});
+let legend = L.control({position: 'bottomleft'});
 
-// legend.onAdd = function () {
-//     let div = L.DomUtil.create('div', 'info legend');
-//     let grades = [1,2]; // change here
-//     for (let i = 0; i < grades.length; i++) {
-//         div.innerHTML +=
-//             '<i style="background:' + 
-//             getColor(grades[i] ) 
-//             + '"></i> '  + (grades[i]) + '<br>';
-//     }
-//     return div;
-// };
-// legend.addTo(map);
+legend.onAdd = function () {
+    let div = L.DomUtil.create('div', 'info legend');
+    let grades = [0.33,-0.33,-1]; // change here
+    let labels = ["Positive", "Neutral", "Negative"]
+    div.innerHTML = 'Overall Work-Life<br>Balance by zipcode<br>' 
+    for (let i = 0; i < grades.length; i++) {
+        div.innerHTML +=
+            '<i style="background:' 
+            + getColorFromScore(grades[i])
+            + '"></i> '  
+            + (labels[i]) + '<br>';
+    }
+    return div;
+};
+legend.addTo(map);
 
 
 // EXECUTE THIS CODE
