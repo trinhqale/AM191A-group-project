@@ -184,12 +184,6 @@ function getBoundary(mapPath, allResponses) {
                     allResponsesGeoJson.features.push(customizedFeature)
             })
             console.log(allResponsesGeoJson.features)
-            // let carePositiveLayer = L.featureGroup()
-            // let careNegativeLayer = L.featureGroup()
-            // let careNeutralLayer = L.featureGroup()
-            // let noncarePositiveLayer = L.featureGroup()
-            // let noncareNegativeLayer = L.featureGroup()
-            // let noncareNeutralLayer = L.featureGroup()
 
             carePositiveLayer = L.geoJSON(allResponsesGeoJson, {
                 style: getStyle,
@@ -316,6 +310,7 @@ function resetHighlight(e) {
 }
 
 // TODO: make changes to sidebar here
+// add neg and neutral
 function populateSidebar(e) {
         let layer = e.target
         document.getElementById("stories").innerHTML = ""
@@ -328,13 +323,9 @@ function populateSidebar(e) {
                 <img src='assets/bus-icon.png'> ${response.commuteMeans} <br> 
                 <img src='assets/caregiver-icon.png'> Caregiver: ${response.caregiver} <br> 
                 Household: ${response.household} <br> <br>
-                <b>How is your work life balance affected by the way you commute?</b> <br> ${response.WLBStory}` 
-                // TODO: if caregiver goes here
-                if (response.caregiver == "Yes")
-                {
-                    document.getElementById("stories").innerHTML += `<br>${response.caregiverStory}`
-                }
-                document.getElementById("stories").innerHTML += `</div>`
+                <b>How is your work life balance affected by the way you commute?</b> <br> ${response.WLBStory} <br>` 
+                + ((response.caregiver == "Yes")? `<b> How do your family responsibilities impact your commute?</b> <br> ${response.caregiverStory}`: ``)  
+                + `</div>` 
             })
             
 
@@ -345,10 +336,10 @@ function populateSidebar(e) {
                     <img src='assets/bus-icon.png'> ${response.commuteMeans} <br> 
                     <img src='assets/caregiver-icon.png'> Caregiver: ${response.caregiver} <br> 
                     Household: ${response.household} <br> <br>
-                    <b>How is your work life balance affected by the way you commute?</b> <br> ${response.WLBStory} 
-                </div>`
+                    <b>How is your work life balance affected by the way you commute?</b> <br> ${response.WLBStory} <br>`
+                    + ((response.caregiver == "Yes")? `<b> How do your family responsibilities impact your commute?</b> <br> ${response.caregiverStory}`: ``)  
+                    + `</div>` 
             })
-            // TODO: if caregiver goes here
         
             layer.feature.properties.neutralResponses.forEach(response => {
                 document.getElementById("stories").innerHTML += 
@@ -357,8 +348,9 @@ function populateSidebar(e) {
                     <img src='assets/bus-icon.png'> ${response.commuteMeans} <br> 
                     <img src='assets/caregiver-icon.png'> Caregiver: ${response.caregiver} <br> 
                     Household: ${response.household} <br> <br>
-                    <b>How is your work life balance affected by the way you commute?</b> <br> ${response.WLBStory} 
-                </div>`
+                    <b>How is your work life balance affected by the way you commute?</b> <br> ${response.WLBStory} <br>`
+                    + ((response.caregiver == "Yes")? `<b> How do your family responsibilities impact your commute?</b> <br> ${response.caregiverStory}`: ``)  
+                    + `</div>` 
             })
             // TODO: if caregiver goes here 
 
