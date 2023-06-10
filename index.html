@@ -32,7 +32,7 @@
                 <li class="navitem logo">
                     <a> LOGO </a>
                 </li>
-                <li class="navitem right"><a href="https://forms.gle/j3HPawxrJzzCoeQX7" target="_blank">Add Story</a></li>
+                <li class="navitem right"><a id="storyButton" href="https://forms.gle/j3HPawxrJzzCoeQX7" target="_blank">Add Story</a></li>
                 <li class="navitem right"><a href="#">About</a></li>
                 <li class="navitem right"><a href="#">Home</a></li>
             </ul>
@@ -46,38 +46,38 @@
             <body style="text-align:left;"> Female faculty members at UCLA, encompassing both caregivers and non-caregivers, have distinct commutes and the accompanying responsibilities that shape their work-life balance. By acknowledging this distinction in our mapplication, users can actively participate in personalized visualizations and narratives that cater to their specific interests. This interactive map experience empowers users to delve into the intricacies of work-life balance and gender inequalities in transportation, gaining valuable insights from the perspectives of female faculty members at UCLA who identify as caregivers or non-caregivers. </body>
             <p style="text-align:center;">blah blah </p>
             <div class="center-div">
-                <pre>
+                <div class="careToggle"><h4>
                     Caregiver   
-                </pre>
+                </h4>
                 <label class="switch">
                     <input type="checkbox" id="caregiverCheckbox" checked>
                     <span class="slider round"></span>
-                  </label>
-                <pre>
+                  </label></div>
+                <div class="careToggle"><h4>
                     Non-caregiver    
-                </pre>
+                </h4>
                   <label class="switch">
                     <input type="checkbox" id="nonCaregiverCheckbox" checked>
                     <span class="slider round"></span>
-                  </label>
+                  </label></div>
             </div>
         </div>
         <div id="content">
             <div id="the_map">
-                <div id="legend"> <h2 style="text-align: center; font-size: x-small;"><b>Work-Life<br> Balance Rating</b></h2>
+                <div id="legend"> <h4 style="text-align: center; font-size: x-small;"><b>Work-Life <br> Balance Rating</b></h4>
                     <div id="positiveLegendHTML" >
                         <input type="checkbox" id="positiveCheckbox" checked>
                         <label for="positiveCheckbox">
-                            positive
+                            Positive
                             <svg height='10' width='10'>
-                                <circle cx='5' cy='5' r='4' fill='#724993'/>
+                                <circle cx='5' cy='5' r='4' fill='#BDF7B7'/>
                             </svg>
                         </label>
                     </div>
                     <div id="neutralLegendHTML">
                         <input type="checkbox" id="neutralCheckbox" checked>
                         <label for="neutralCheckbox">
-                            neutral <svg height='10' width='10'><circle cx='5' cy='5' r='4' fill='#496B93'/>
+                            Neutral <svg height='10' width='10'><circle cx='5' cy='5' r='4' fill='#F8F4A6'/>
                             </svg>
                             
                         </label>
@@ -85,9 +85,9 @@
                     <div id="negativeLegendHTML" >
                         <input type="checkbox" id="negativeCheckbox" checked>
                         <label for="negativeCheckbox">
-                            negative
+                            Negative
                             <svg height='10' width='10'>
-                                <circle cx='5' cy='5' r='4' fill='#724993'/>
+                                <circle cx='5' cy='5' r='4' fill='#EE6055'/>
                             </svg>
                         </label>
                     </div>
