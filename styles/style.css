@@ -22,6 +22,14 @@ h3 {
     font-size: 20px;
 }
 
+h4 {
+    font-family: Manrope, sans-serif;
+    font-style: normal;
+        font-weight: 400;
+    font-size: 20px;
+    display: inline;
+}
+
 header {
     grid-area: header;
     justify-self: stretch;
@@ -38,17 +46,22 @@ header {
     padding-right: 10%;
 }
 
+#hero {
+    grid-area: main_content;
+    /* display: grid;
+    grid-template-columns: 1fr .25fr;
+    grid-template-areas: "main img"; */
+}
+
 #content {
     grid-area: main_content;
     display: grid;
-    grid-template-columns: .5fr .5fr;
+    grid-template-columns: 1fr .25fr;
     grid-template-areas: "main_map sidebar";
     /* add charts */
     column-gap: 1%;
     margin-top: 8%;
     margin-bottom: 8%;
-    padding-left: 3%;
-    padding-right: 3%;
 }
 
 #the_map {
@@ -59,15 +72,6 @@ header {
     grid-template-rows: repeat(3, minmax(0, 1fr));
     align-items: center;
     justify-items: right;  
-}
-
-#legend{
-    z-index: 9999;
-    background-color: white;
-    padding: 10px;    
-    grid-column: 1 / span 3;
-    grid-row: 1;
-    font-size: x-small;
 }
 
 #placeForButtons {
@@ -133,41 +137,43 @@ li.navitem.right {
     float: right;
 }
 
-.navbar-container .logo {
-    margin-right: auto;
-    /* Pushes the logo to the right */
-}
-
-.navbar-container .nav-button {
-    padding: 5px 10px;
-    /* Adjust the button padding for desired size */
-    font-size: 16px;
-    /* Adjust the font size for desired size */
+#storyButton {
+    text-transform: uppercase;
+    border-radius: 8px;
+    border-width: 0;
+    margin: 6px;
+    padding: 10px 12px;
+    background-color: #ccc;
 }
 
 .info {
     padding: 6px 8px;
-    font: 14px/16px Arial, Helvetica, sans-serif;
+    font-family: Manrope, sans-serif;
+    font-size: 12px;
     background: white;
     background: rgba(255,255,255,0.8);
     box-shadow: 0 0 15px rgba(0,0,0,0.2);
     border-radius: 5px;
 }
-.info h4 {
+.info header {
+    font-family: Manrope, sans-serif;
+    font-style: normal;
+        font-weight: 400;
+    font-size: 14px;
     margin: 0 0 5px;
     color: #777;
 }
 
-.legend {
-    line-height: 18px;
-    color: #555;
-}
-.legend i {
-    width: 18px;
-    height: 18px;
-    float: left;
-    margin-right: 8px;
-    opacity: 0.7;
+#legend{
+    z-index: 9999;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    padding: 6px 8px;  
+    font-size: x-small;
+    margin: -20px 10px 0 0;
+    grid-column: 3;
 }
 
 /* story response */
@@ -184,13 +190,6 @@ li.navitem.right {
     transform: translateY(-50%);
     margin: 0;
     padding: 0;
-}
-
-#legend {
-    z-index: 1000;
-    position: relative;
-    background-color: #F7F6F3;
-    width: 100px;
 }
 
 .switch {
@@ -257,3 +256,19 @@ li.navitem.right {
     display: flex;
     justify-content: center;
   }
+
+.careToggle {
+    align-items: center;
+    margin: 6px;
+    padding: 10px 12px;
+}
+
+#button {
+    font-family: Manrope, sans-serif;
+    font-size: 14px;
+    border-radius: 8px;
+    border-width: 0;
+    margin: 6px;
+    padding: 10px 12px;
+    background-color: #ccc;  
+}
