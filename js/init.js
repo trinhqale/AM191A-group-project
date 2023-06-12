@@ -6,15 +6,6 @@ const map = L.map('the_map').setView(mapOptions.center, mapOptions.zoom);
 const MAP_PATH = "data/ca_zipcodes.geojson"
 const DATA_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCF24Aalv8tZ3neF_4LZQ21KLokn5jtZgpc9-wiAuDhT1_LXNYtxKRtsM-eo0UAzhGUHqQvJCgCNmI/pub?output=csv"
 
-// checkboxes for user rating
-const positiveResponsesLegendHtml = document.getElementById("positiveCheckbox");
-const negativeResponsesLegendHtml = document.getElementById("negativeCheckbox");
-const neutralResponsesLegendHtml = document.getElementById("neutralCheckbox");
-
-//checkboxes for caregiver
-const caregiverHTML = document.getElementById("caregiverCheckbox")
-const nonCaregiverHTML = document.getElementById("nonCaregiverCheckbox")
-
 // 6 Layers for displaying different results
 // care = caregiver, noncare = non-caregiver
 let carePositiveLayer = L.featureGroup()
@@ -23,6 +14,17 @@ let careNeutralLayer = L.featureGroup()
 let noncarePositiveLayer = L.featureGroup()
 let noncareNegativeLayer = L.featureGroup()
 let noncareNeutralLayer = L.featureGroup()
+
+// track count
+let responseCount = {
+    "carePosCount": 0,
+    "careNeuCount": 0,
+    "careNegCount": 0,
+    "nonPosCount": 0,
+    "nonNeuCount": 0,
+    "nonNegCount": 0,
+};
+
 
 // whether to display postive/negative/neutral experience 
 let displayPositiveResponses = true
@@ -58,9 +60,9 @@ function loadData(url) {
  */
 function processData(data) {
     let allResponses = []
-    console.log("Data Length: " + data.length);
+    // console.log("Data Length: " + data.length);
     data.forEach(column => {
-            console.log(column)
+            // console.log(column)
             let userResponse = getUserResponseData(column)
             allResponses.push(userResponse)
         });
@@ -68,7 +70,7 @@ function processData(data) {
     // map bounds
     let latlngs = []
     allResponses.forEach(response=>{
-        console.log(response.zipcode.length)
+        // console.log(response.zipcode.length)
         // if zipcode is valid (aka not empty)
         if(response.zipcode.length > 0)
         {
@@ -76,6 +78,9 @@ function processData(data) {
         }
     })
     map.fitBounds(latlngs);
+
+    // progress bar
+    // moveProgress();
 }
 
 /**
@@ -145,9 +150,33 @@ function getBoundary(mapPath, allResponses) {
                         "coordinates": feature.geometry.coordinates
                     },
                 }
-                allResponses.forEach(response=>{
-                    if(response.zipcode == feature.properties.zcta)
-                    {
+                allResponses.forEach(response=> {
+                    if (response.zipcode == feature.properties.zcta) {
+                        if (response.experience.includes("Negative")) {
+                            if (response.caregiver == "Yes") {
+                                responseCount["careNegCount"]++;
+                            }
+                            else {
+                                responseCount["nonNegCount"]++;
+                            }
+                        }
+                        else if (response.experience.includes("Positive")) {
+                            if (response.caregiver == "Yes") {
+                                responseCount["carePosCount"]++;
+                            }
+                            else {
+                                responseCount["nonPosCount"]++;
+                            }
+                        }
+                        else if (response.experience.includes("Neutral")) {
+                            if (response.caregiver == "Yes") {
+                                responseCount["careNeuCount"]++;
+                            }
+                            else {
+                                responseCount["nonNeuCount"]++;
+                            }
+                        }
+
                         addFeature = true
                         // add positive/negative/neutral response to geojson
                         if(response.experience.includes("Positive"))
@@ -176,7 +205,8 @@ function getBoundary(mapPath, allResponses) {
                 if(addFeature)
                     allResponsesGeoJson.features.push(customizedFeature)
             })
-            console.log(allResponsesGeoJson.features)
+            
+            // console.log(allResponsesGeoJson.features.length)
 
             carePositiveLayer = L.geoJSON(allResponsesGeoJson, {
                 style: getStyle,
@@ -227,6 +257,9 @@ function getBoundary(mapPath, allResponses) {
             }).addTo(map)
             
         })
+        .then(_ => {
+            moveProgress();
+        })
 }
 
 /**
@@ -236,7 +269,7 @@ function getBoundary(mapPath, allResponses) {
  */
 
 function getStyle(feature) {
-    console.log(feature)
+    // console.log(feature)
     let score = getScoreForRegion(feature);
         return {
             fillColor: getColorFromScore(score),
@@ -248,8 +281,7 @@ function getStyle(feature) {
 }
 
 
-function getScoreForRegion(feature)
-{
+function getScoreForRegion(feature) {
     let plusScore = feature.properties.positiveResponses.length 
     let minusScore = feature.properties.negativeResponses.length
     let neutralScore = feature.properties.neutralResponses.length
@@ -317,8 +349,8 @@ function populateSidebar(e) {
 
     // filter responses by caregiver  
     displayingResponses = displayingResponses.filter(function (response) {
-        console.log("display care: ", displayCaregiver)
-        console.log("current response is a caregiver: ", response.caregiver)
+        // console.log("display care: ", displayCaregiver)
+        // console.log("current response is a caregiver: ", response.caregiver)
         if (!displayCaregiver && response.caregiver == "Yes") {
           return false; 
         }
@@ -328,7 +360,7 @@ function populateSidebar(e) {
           return true; 
         }
       });
-    console.log(displayingResponses)
+    // console.log(displayingResponses)
 
     
     // create dynamic buttons
@@ -357,7 +389,7 @@ function populateSidebar(e) {
         button.textContent = response.commuteMeans;
         button.className = "button";
         button.addEventListener("click", function () {
-            console.log("Button clicked: " + response.commuteMeans);
+            // console.log("Button clicked: " + response.commuteMeans);
             let filteredResponses = displayingResponses.filter(res => res.commuteMeans == response.commuteMeans)
             generateSidebarResponses(storiesHTML, filteredResponses)
         });
@@ -438,13 +470,13 @@ function getDistanceToUCLA(latlng)
 
 // add legend
 
-let legend = L.control({position: 'bottomleft'});
+let legend = L.control({position: 'bottomright'});
 
 legend.onAdd = function () {
     let div = L.DomUtil.create('div', 'info legend');
     let grades = [0.33,-0.33,-1]; // change here
     let labels = ["Positive", "Neutral", "Negative"]
-    div.innerHTML = 'Overall Work-Life<br>Balance by zipcode<br>' 
+    div.innerHTML = 'Overall Work-Life<br>Balance<br>' 
     for (let i = 0; i < grades.length; i++) {
         div.innerHTML +=
             '<i style="background:' 
@@ -454,33 +486,46 @@ legend.onAdd = function () {
     }
     return div;
 };
-//legend.addTo(map);
+legend.addTo(map);
 
 
 // EXECUTE THIS CODE
 loadData(DATA_URL)
 
 // Toggle Layers
-positiveResponsesLegendHtml.addEventListener("change", togglePositiveLayer) 
+document.getElementById("posCareProgress").addEventListener("click", function(e) {
+    if (map.hasLayer(carePositiveLayer)) {
+        map.removeLayer(carePositiveLayer);
+    }
+    else {
+        map.addLayer(carePositiveLayer);
+    }
+});
 
-function togglePositiveLayer(){
-    if(positiveResponsesLegendHtml.checked){
-        if (displayCaregiver)
-        {
-            map.addLayer(carePositiveLayer)
-        }
-        if(displayNonCaregiver)
-        {
-            map.addLayer(noncarePositiveLayer)
-        }
-        displayPositiveResponses = true
-    }
-    else{
-        map.removeLayer(carePositiveLayer)
-        map.removeLayer(noncarePositiveLayer)
-        displayPositiveResponses = false
-    }
-}
+// function togglePositiveLayer(){
+//     if (map.hasLayer(carePositiveLayer)) {
+//         map.removeLayer(carePositiveLayer);
+//     }
+//     else {
+//         map.addLayer(carePositiveLayer);
+//     }
+    // if(positiveResponsesLegendHtml.checked){
+    //     if (displayCaregiver)
+    //     {
+    //         map.addLayer(carePositiveLayer)
+    //     }
+    //     if(displayNonCaregiver)
+    //     {
+    //         map.addLayer(noncarePositiveLayer)
+    //     }
+    //     displayPositiveResponses = true
+    // }
+    // else{
+    //     map.removeLayer(carePositiveLayer)
+    //     map.removeLayer(noncarePositiveLayer)
+    //     displayPositiveResponses = false
+    // }
+// }
 
 negativeResponsesLegendHtml.addEventListener("change", toggleNegativeLayer) 
 
@@ -524,13 +569,13 @@ function toggleNeutralLayer(){
     }
 }
 
-caregiverHTML.addEventListener("change", toggleCaregiver)
+// caregiverHTML.addEventListener("change", toggleCaregiver)
 
 function toggleCaregiver()
 {   
     if(caregiverHTML.checked)
     {  
-        console.log("caregiver on")
+        // console.log("caregiver on")
         displayCaregiver = true
         if(displayPositiveResponses)
         {
@@ -547,7 +592,7 @@ function toggleCaregiver()
     }
     else
     {
-        console.log("caregiver off")
+        // console.log("caregiver off")
         displayCaregiver = false
         map.removeLayer(carePositiveLayer)
         map.removeLayer(careNegativeLayer)
@@ -555,13 +600,13 @@ function toggleCaregiver()
     }
 }
 
-nonCaregiverHTML.addEventListener("change", toggleNonCaregiver)
+// nonCaregiverHTML.addEventListener("change", toggleNonCaregiver)
 
 function toggleNonCaregiver()
 {   
     if(nonCaregiverHTML.checked)
     {  
-        console.log("noncaregiver on")
+        // console.log("noncaregiver on")
         displayNonCaregiver = true
         if(displayPositiveResponses)
         {
@@ -578,7 +623,7 @@ function toggleNonCaregiver()
     }
     else
     {
-        console.log("noncaregiver off")
+        // console.log("noncaregiver off")
         displayNonCaregiver = false
         map.removeLayer(noncarePositiveLayer)
         map.removeLayer(noncareNegativeLayer)
@@ -605,7 +650,80 @@ var uclaIcon = L.icon({
       iconElement.style.height = '36px';
     }
   });
-  
+
+function moveProgress() {
+    // setTimeout(function(){
+
+    // }, 1000);
+
+    let totalCaregiverCount = responseCount["carePosCount"] + responseCount["careNegCount"] + responseCount["careNeuCount"]
+    let carePosRatio = (responseCount["carePosCount"] / totalCaregiverCount) * 100
+    let careNegRatio = (responseCount["careNegCount"] / totalCaregiverCount) * 100
+    let careNeuRatio = (responseCount["careNeuCount"] / totalCaregiverCount) * 100
+
+    let totalNoncaregiverCount = responseCount["carePosCount"] + responseCount["careNegCount"] + responseCount["careNeuCount"]
+    let nonPosRatio = (responseCount["nonPosCount"] / totalCaregiverCount) * 100
+    let nonNegRatio = (responseCount["nonNegCount"] / totalCaregiverCount) * 100
+    let nonNeuRatio = (responseCount["nonNeuCount"] / totalCaregiverCount) * 100
+
+    document.getElementById("posCareProgress").setAttribute("style","width:" + carePosRatio + "%");
+    document.getElementById("negCareProgress").setAttribute("style","width:" + careNegRatio + "%");
+    document.getElementById("neuCareProgress").setAttribute("style","width:" + careNeuRatio + "%");
+
+    document.getElementById("posNonProgress").setAttribute("style","width:" + nonPosRatio + "%");
+    document.getElementById("negNonProgress").setAttribute("style","width:" + nonNegRatio + "%");
+    document.getElementById("neuNonProgress").setAttribute("style","width:" + nonNeuRatio + "%");
+
+    // let progressBar = document.getElementById("progressBar");
+
+    // console.log("HERRREEEE");
+    // console.log(getScoreForRegion(carePositiveLayer));
+
+    // bar.style.width = getScoreForRegion(feature.carePositiveLayer) + '%';
+}
+
+// project intro modal popup on load
+let modal = document.getElementById("myModal");
+let spans = document.getElementsByClassName("close"); //span element that closes the modal
+//open the modal on load
+window.onload = (event) =>  { 
+  modal.style.display = "block";
+};
+//close the modal when click x
+spans[0].onclick = function() {
+    modal.style.display = "none";
+}
+//clicks anywhere outside close modal
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+} 
+// console.log("!!!!!!!!!!!!!!!")
+
+let total = careNegativeLayer.getLayers().length;
+// console.log(_.size(careNegativeLayer))
+// console.log(total)
+
+// caregiver info popup modual
+let careInfoPop = document.getElementById("carePop");
+let noncareInfoPop = document.getElementById("noncarePop");
+// let span2 = document.getElementsByClassName("close")[1]; //span element that closes the modal
+// infoButton.onclick = function() {
+//     careInfoPop.style.display = "none";
+// };
+
+function closePopup(element) {
+    let popup = document.getElementById(element);
+    popup.style.display = "none";
+}
+
+function openPopup(element) {
+    let popup = document.getElementById(element);
+    popup.style.display = "block";
+}
+
+
 //   map.on('zoomend', function () {
 //     var currentZoom = map.getZoom();
 //     var updatedIconSize = [36, 36]; // Determine the size of the icon with zoom level

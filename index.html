@@ -25,9 +25,7 @@
 
 <body>
     <header>
-
         <div>
-
             <ul class="navbar">
                 <li class="navitem logo">
                     <a> LOGO </a>
@@ -36,35 +34,58 @@
                 <li class="navitem right"><a href="#">About</a></li>
                 <li class="navitem right"><a href="#">Home</a></li>
             </ul>
-
         </div>
     </header>
     <div class="main">
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modalInnerDiv">
+                <img src="assets/logo.png">
+                <p> Female faculty members at UCLA, encompassing both caregivers and non-caregivers, have distinct commutes and the accompanying responsibilities that shape their work-life balance. By acknowledging this distinction in our mapplication, users can actively participate in personalized visualizations and narratives that cater to their specific interests. This interactive map experience empowers users to delve into the intricacies of work-life balance and gender inequalities in transportation, gaining valuable insights from the perspectives of female faculty members at UCLA who identify as caregivers or non-caregivers. </p>
+            </div>
+            </div>
+        </div>
+        <div id="carePop">
+            <span class="close" onclick="closePopup('carePop')">&times;</span>
+            <img src="assets/mom.png" style="height: 100px;">
+            <p>Caregivers among UCLA female faculty have responsibilities to support the well-being of their children or loved ones.</p>
+        </div>
+        <div id="noncarePop">
+            <span class="close" onclick="closePopup('noncarePop')">&times;</span>
+            <img src="assets/singlewoman.png" style="height: 100px;">
+            <p>Non-caregivers do not have the added responsibility of caring for family members or loved ones.</p>
+        </div>
         <div id="hero">
             <h1 style="text-align:center; line-height:0px;">Girls Just Want to Have Fun:</h1>
             <h3 style="text-align:center;">Gender Inequality in Transportation and Work-Life Balance</h3>
-            <body style="text-align:left;"> Female faculty members at UCLA, encompassing both caregivers and non-caregivers, have distinct commutes and the accompanying responsibilities that shape their work-life balance. By acknowledging this distinction in our mapplication, users can actively participate in personalized visualizations and narratives that cater to their specific interests. This interactive map experience empowers users to delve into the intricacies of work-life balance and gender inequalities in transportation, gaining valuable insights from the perspectives of female faculty members at UCLA who identify as caregivers or non-caregivers. </body>
-            <div class="center-div">
-                <div class="careToggle"><h2>Caregiver</h2>
-                    <img src="assets/mom.png" style="height: 200px;"> <br>
-                    <label class="switch">
-                    <input type="checkbox" id="caregiverCheckbox" checked>
-                    <span class="slider round"></span>
-                    <p style="font-size: smaller; margin-top: 30px;">Caregivers among UCLA female faculty have responsibilities to support the well-being of their children or loved ones.</p>
-                    </label>
-                </div>
-                <div class="careToggle"><h2>Non-caregiver</h2>
-                    <img src="assets/singlewoman.png" style="height: 200px;"> <br>
-                    <label class="switch">
-                    <input type="checkbox" id="nonCaregiverCheckbox" checked>
-                    <span class="slider round"></span>
-                    <p style ="font-size: smaller; margin-top: 30px;">Non-caregivers do not have the added responsibility of caring for family members or loved ones. </p>
-                    </label>
-                </div>
-            </div>
         </div>
         <div id="content">
             <div id="the_map">
+                <div class="careToggle" style="grid-column: 2;"><h2>Caregiver <button id="careInfo" onclick="openPopup('carePop')"><img src="assets/info.png" class="icon"></button></h2>
+                    <!-- <label class="switch">
+                    <input type="checkbox" id="caregiverCheckbox" checked>
+                    <span class="slider round"></span>
+                    </label> -->
+                    <div id="careProgress">
+                        <div id="posCareProgress"></div>
+                        <div id="neuCareProgress"></div>
+                        <div id="negCareProgress"></div>
+                    </div>
+                </div>
+                <div class="careToggle"><h2>Non-caregiver <button id="noncareInfo" onclick="openPopup('noncarePop')"><img src="assets/info.png" class="icon"></button> </h2>
+                    <div id="nonProgress">
+                        <div id="posNonProgress"></div>
+                        <div id="neuNonProgress"></div>
+                        <div id="negNonProgress"></div>
+                    </div>
+                    <!-- <label class="switch">
+                    <input type="checkbox" id="nonCaregiverCheckbox" checked>
+                    <span class="slider round"></span>
+                    </label> -->
+                </div>
                 <div id="legend"> <h4 style="text-align: center; font-size: x-small;"><b>Work-Life <br> Balance Rating</b></h4>
                     <div id="positiveLegendHTML" >
                         <input type="checkbox" id="positiveCheckbox" checked>
@@ -94,12 +115,12 @@
                     </div>
                 </div>
             </div>
-            <div id="sidebar">
+            <!-- <div id="sidebar">
                 <div id="transportModes"> </div>
                 <div id="stories" style="margin-top:50px;">
                     <b>Instruction:</b> Choose a group of caregiver, non-caregiver(or both) that you're interested in. Click on a zipcode region to read different stories. You can also filter the result by different experience and means of commute.
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
     <footer>
