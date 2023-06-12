@@ -13,6 +13,7 @@ h1, h2 {
     font-family: Gelica, serif;
     font-style: normal;
         font-weight: 400;
+    color: #D2527F;
 }
 
 h3 {
@@ -143,7 +144,9 @@ li.navitem.right {
     border-width: 0;
     margin: 6px;
     padding: 10px 12px;
-    background-color: #ccc;
+    background-color: #D2527F;
+    color: #F7F6F3;
+
 }
 
 .info {
@@ -254,13 +257,16 @@ li.navitem.right {
 
   .center-div {
     display: flex;
-    justify-content: center;
+    justify-content:center;
   }
 
 .careToggle {
     align-items: center;
-    margin: 6px;
-    padding: 10px 12px;
+    text-align: center;
+    margin: 40px;
+    padding: 20px;
+    border: 5px solid #D2527F;
+    border-radius: 10px;
 }
 
 #button {

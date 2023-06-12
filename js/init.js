@@ -261,15 +261,15 @@ function getScoreForRegion(feature)
 function getColorFromScore(score) {
     if(score >= 0.33)
     {
-        return "#BDF7B7" // green
+        return "#9FF25D" // green
     }
     else if(score >= -0.33)
     {
-        return "#F8F4A6" //yellow
+        return "#F2DA5D" //yellow
     }
     else
     {
-        return "#EE6055" //red
+        return "#F25D5D" //red
     }
 }
 
@@ -588,8 +588,8 @@ function toggleNonCaregiver()
 
 // TODO: add UCLA marker with custom design
 var uclaIcon = L.icon({
-    iconUrl: 'assets/ucla-pin.png', // will be replaced by custom icon
-    iconSize: [100, 100],
+    iconUrl: 'assets/ucla.png', // will be replaced by custom icon
+    iconSize: [40, 40],
     iconAnchor: [18, 36],
   });
   
@@ -606,20 +606,20 @@ var uclaIcon = L.icon({
     }
   });
   
-  map.on('zoomend', function () {
-    var currentZoom = map.getZoom();
-    var updatedIconSize = [36, 36]; // Determine the size of the icon with zoom level
+//   map.on('zoomend', function () {
+//     var currentZoom = map.getZoom();
+//     var updatedIconSize = [36, 36]; // Determine the size of the icon with zoom level
   
-    // Adjust the icon size based on the current zoom level
-    if (currentZoom >= 10 && currentZoom < 15) {
-      updatedIconSize = [40, 40];
-    } else if (currentZoom >= 15 && currentZoom < 20) {
-      updatedIconSize = [50, 50];
-    } else if (currentZoom >= 20) {
-      updatedIconSize = [60, 60];
-    }
+//     // Adjust the icon size based on the current zoom level
+//     if (currentZoom >= 10 && currentZoom < 15) {
+//       updatedIconSize = [40, 40];
+//     } else if (currentZoom >= 15 && currentZoom < 20) {
+//       updatedIconSize = [50, 50];
+//     } else if (currentZoom >= 20) {
+//       updatedIconSize = [60, 60];
+//     }
   
-    // Update the icon size of the marker
-    uclaIcon.options.iconSize = updatedIconSize;
-    marker.setIcon(uclaIcon);
-  });
+//     // Update the icon size of the marker
+//     uclaIcon.options.iconSize = updatedIconSize;
+//     marker.setIcon(uclaIcon);
+//   });
