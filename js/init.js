@@ -90,7 +90,8 @@ function getUserResponseData(data) {
     let household = data['How many people are in your household?'];
     let commuteMeans = data['How do you typically travel to and from campus?']
     let caregiverStory = data['How do your family responsibilities impact your commute?'];
-    let latlng = [data['lat'], data['lng']]
+    let optionalComment = data['(Optional) Is there anything else you would like to share?'];
+    let latlng = [data['lat'], data['lng']];
     // TODO: Calculate distance from UCLA here
     // TODO: add more details as needed 
     let userResponse = {
@@ -101,7 +102,8 @@ function getUserResponseData(data) {
         "WLBStory": WLBStory,
         "caregiverStory": caregiverStory,
         "experience": userExperience,
-        "latlng" : latlng
+        "optionalComment" : optionalComment,
+        "latlng" : latlng,
     };
     return userResponse
 }
@@ -257,40 +259,18 @@ function getScoreForRegion(feature)
 // TODO: May need to come up with new color gradient
 // TODO: Change the colors as you like at https://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3 (Ctrl + Click)
 function getColorFromScore(score) {
-    // some made up scale
-    // -1  -0.33   0     1
-    // if(score >= 0.6)
-    // {
-    //     return "#00FF00"// very positive
-    // }
-    // if(score >= 0.2)
-    // {
-    //     return "#7CFF00"// positive
-    // }
-    // if(score >= -0.2)
-    // {
-    //     return "#FFD700"//neutral
-    // }
-    // if(score >= -0.6)
-    // {
-    //     return "#FF6A00"//negative
-    // }
-    // else {
-    //     return "#FF0000"//very negative
-    // }
     if(score >= 0.33)
     {
-        return "green"
+        return "#BDF7B7" // green
     }
     else if(score >= -0.33)
     {
-        return "yellow"
+        return "#F8F4A6" //yellow
     }
     else
     {
-        return "red"
+        return "#EE6055" //red
     }
-
 }
 
 
@@ -349,11 +329,22 @@ function populateSidebar(e) {
         }
       });
     console.log(displayingResponses)
+
     
     // create dynamic buttons
     let buttonContainer = document.getElementById("transportModes");
     buttonContainer.innerHTML = ""
     let commuteList = [] // avoid duplicate buttons
+
+    //Create a show all button 
+    let showAllButton = document.createElement("button")
+    showAllButton.textContent = "Show All"
+    showAllButton.addEventListener("click", function(){
+        generateSidebarResponses(storiesHTML, displayingResponses)
+    })
+    showAllButton.style.margin = "5px"
+    buttonContainer.appendChild(showAllButton);
+
     // Create buttons and add onClick
     // Onclick: Get the corresponding response
     displayingResponses.forEach(response=> {
@@ -364,6 +355,7 @@ function populateSidebar(e) {
         commuteList.push(response.commuteMeans)
         let button = document.createElement("button");
         button.textContent = response.commuteMeans;
+        button.id = "button";
         button.addEventListener("click", function () {
             console.log("Button clicked: " + response.commuteMeans);
             let filteredResponses = displayingResponses.filter(res => res.commuteMeans == response.commuteMeans)
@@ -393,17 +385,18 @@ function generateSidebarResponses(sidebarHTML, responses)
         }
         sidebarHTML.innerHTML += 
         `<div class="response" ${style}> 
-            <img src='assets/home-icon.png'> ${response.zipcode} <br>
-            <img src='assets/bus-icon.png'> ${response.commuteMeans} <br> 
-            <img src='assets/caregiver-icon.png'> Caregiver: ${response.caregiver} <br> 
-            Household: ${response.household} <br> <br>
-            <b>How is your work life balance affected by the way you commute?</b> <br> ${response.WLBStory} <br><br>` 
-            + ((response.caregiver == "Yes")? `<b> How do your family responsibilities impact your commute?</b> <br> ${response.caregiverStory}`: ``)  
-            + `</div>` 
+        <img src='assets/home-icon.png'> ${response.zipcode} <br>
+        <img src='assets/bus-icon.png'> ${response.commuteMeans} <br> 
+        <img src='assets/caregiver-icon.png'> Caregiver: ${response.caregiver} <br> 
+        Household: ${response.household} <br> <br>
+        <b>How is your work life balance affected by the way you commute?</b> <br> ${response.WLBStory} <br><br>` 
+        + ((response.caregiver == "Yes")? `<b> How do your family responsibilities impact your commute?</b> <br> ${response.caregiverStory} <br><br>`: ``)
+        + ((response.optionalComment.length > 0)? `<b>Is there anything else you would like to share?</b> <br> ${response.optionalComment} )` : ``)
+        + `</div>` 
     })
 }
 // Add info for mouse hovering 
-let info = L.control({position : "bottomright"});
+let info = L.control({position : "bottomleft"});
 info.onAdd = function () {
     this._div = L.DomUtil.create('div', 'info'); 
     this.update();
@@ -417,11 +410,13 @@ info.update = function (props) {
     let negativeCount = props.negativeResponses.length
     let neutralCount = props.neutralResponses.length
     let totalCount = positiveCount + negativeCount + neutralCount
+    let latlng = [props.latitude, props.longitude]
+    let distanceToUCLA = getDistanceToUCLA(latlng)
     this._div.innerHTML = 
-        '<h4>Experience by Zipcode</h4>' 
-        + '<img src="assets/home-icon.png"> Zipcode: ' + props.zcta + '<br />' 
-        + 'Distance to UCLA: ' + '<br>'
-        + 'Total Responses: ' + totalCount 
+        '<header>Zipcode: ' + props.zcta + '</header>' 
+        'Total Responses: ' + totalCount + '<br>'
+        + 'Distance to UCLA:<br>' 
+        + distanceToUCLA + ' miles' + '<br>'
     }
     else
     {
@@ -432,9 +427,17 @@ info.update = function (props) {
 
 info.addTo(map);
 
-// TODO: Saved for later, maybe we don't need this 
+function getDistanceToUCLA(latlng)
+{
+    let UCLAlatlng = L.latLng([34.0709, -118.444])
+    let currentLatlng = L.latLng(latlng)
+    let distance = UCLAlatlng.distanceTo(currentLatlng) / 1609.344
+    distance = distance.toFixed(2)
+    return distance
+}
+
 // add legend
-// TODO: change the scale as we receive more responses
+
 let legend = L.control({position: 'bottomleft'});
 
 legend.onAdd = function () {
@@ -451,12 +454,11 @@ legend.onAdd = function () {
     }
     return div;
 };
-legend.addTo(map);
+//legend.addTo(map);
 
 
 // EXECUTE THIS CODE
 loadData(DATA_URL)
-// TODO: add UCLA marker with custom design
 
 // Toggle Layers
 positiveResponsesLegendHtml.addEventListener("change", togglePositiveLayer) 
@@ -586,8 +588,8 @@ function toggleNonCaregiver()
 
 // TODO: add UCLA marker with custom design
 var uclaIcon = L.icon({
-    iconUrl: 'assets/ucla.png', // will be replaced by custom icon
-    iconSize: [36, 36],
+    iconUrl: 'assets/ucla-pin.png', // will be replaced by custom icon
+    iconSize: [100, 100],
     iconAnchor: [18, 36],
   });
   
@@ -621,4 +623,3 @@ var uclaIcon = L.icon({
     uclaIcon.options.iconSize = updatedIconSize;
     marker.setIcon(uclaIcon);
   });
-  
