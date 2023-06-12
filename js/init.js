@@ -336,14 +336,14 @@ function populateSidebar(e) {
     buttonContainer.innerHTML = ""
     let commuteList = [] // avoid duplicate buttons
 
-    //Create a show all button 
-    let showAllButton = document.createElement("button")
-    showAllButton.textContent = "Show All"
-    showAllButton.addEventListener("click", function(){
-        generateSidebarResponses(storiesHTML, displayingResponses)
-    })
-    showAllButton.style.margin = "5px"
-    buttonContainer.appendChild(showAllButton);
+    // //Create a show all button 
+    // let showAllButton = document.createElement("button")
+    // showAllButton.textContent = "Show All"
+    // showAllButton.addEventListener("click", function(){
+    //     generateSidebarResponses(storiesHTML, displayingResponses)
+    // })
+    // showAllButton.style.margin = "5px"
+    // buttonContainer.appendChild(showAllButton);
 
     // Create buttons and add onClick
     // Onclick: Get the corresponding response
@@ -413,8 +413,8 @@ info.update = function (props) {
     let latlng = [props.latitude, props.longitude]
     let distanceToUCLA = getDistanceToUCLA(latlng)
     this._div.innerHTML = 
-        '<header>Zipcode: ' + props.zcta + '</header>' 
-        'Total Responses: ' + totalCount + '<br>'
+        'Zipcode: ' + props.zcta + 
+        '<br>Total Responses: ' + totalCount + '<br>'
         + 'Distance to UCLA:<br>' 
         + distanceToUCLA + ' miles' + '<br>'
     }
