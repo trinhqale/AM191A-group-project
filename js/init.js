@@ -1,19 +1,18 @@
 // DEFINE GLOBAL VARIABLES
-
 let mapOptions = { 'center': [34.0709, -118.444], 'zoom': 10 };
 const map = L.map('the_map').setView(mapOptions.center, mapOptions.zoom);
 
-const MAP_PATH = "data/ca_zipcodes.geojson"
-const DATA_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCF24Aalv8tZ3neF_4LZQ21KLokn5jtZgpc9-wiAuDhT1_LXNYtxKRtsM-eo0UAzhGUHqQvJCgCNmI/pub?output=csv"
+const MAP_PATH = "data/ca_zipcodes.geojson";
+const DATA_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCF24Aalv8tZ3neF_4LZQ21KLokn5jtZgpc9-wiAuDhT1_LXNYtxKRtsM-eo0UAzhGUHqQvJCgCNmI/pub?output=csv";
 
 // 6 Layers for displaying different results
 // care = caregiver, noncare = non-caregiver
-let carePositiveLayer = L.featureGroup()
-let careNegativeLayer = L.featureGroup()
-let careNeutralLayer = L.featureGroup()
-let noncarePositiveLayer = L.featureGroup()
-let noncareNegativeLayer = L.featureGroup()
-let noncareNeutralLayer = L.featureGroup()
+let carePositiveLayer = L.featureGroup();
+let careNegativeLayer = L.featureGroup();
+let careNeutralLayer = L.featureGroup();
+let noncarePositiveLayer = L.featureGroup();
+let noncareNegativeLayer = L.featureGroup();
+let noncareNeutralLayer = L.featureGroup();
 
 // track count
 let responseCount = {
@@ -27,13 +26,13 @@ let responseCount = {
 
 
 // whether to display postive/negative/neutral experience 
-let displayPositiveResponses = true
-let displayNegativeResponses = true
-let displayNeutralResponses = true
+let displayPositiveResponses = true;
+let displayNegativeResponses = true;
+let displayNeutralResponses = true;
 
 // whether to display caregiver or non-caregiver
-let displayCaregiver = true
-let displayNonCaregiver = true
+let displayCaregiver = true;
+let displayNonCaregiver = true;
 
 // change map type
 let Jawg_Light = L.tileLayer('https://{s}.tile.jawg.io/jawg-light/{z}/{x}/{y}{r}.png?access-token={accessToken}', {
@@ -43,7 +42,7 @@ let Jawg_Light = L.tileLayer('https://{s}.tile.jawg.io/jawg-light/{z}/{x}/{y}{r}
     subdomains: 'abcd',
     accessToken: 'FkWnkf1e22dnL71CnkeDRnZeEZRyPNd6DqNr2frT4o5zPMcnKvgfcgG2gQCNjnR7'
 });
-Jawg_Light.addTo(map)
+Jawg_Light.addTo(map);
 
 function loadData(url) {
     Papa.parse(url, {
@@ -59,28 +58,21 @@ function loadData(url) {
  * @param {*} results 
  */
 function processData(data) {
-    let allResponses = []
-    // console.log("Data Length: " + data.length);
+    let allResponses = [];
     data.forEach(column => {
-            // console.log(column)
             let userResponse = getUserResponseData(column)
             allResponses.push(userResponse)
         });
     getBoundary(MAP_PATH, allResponses);
     // map bounds
-    let latlngs = []
-    allResponses.forEach(response=>{
-        // console.log(response.zipcode.length)
+    let latlngs = [];
+    allResponses.forEach(response => {
         // if zipcode is valid (aka not empty)
-        if(response.zipcode.length > 0)
-        {
-            latlngs.push([response.latlng])
+        if (response.zipcode.length > 0) {
+            latlngs.push([response.latlng]);
         }
     })
     map.fitBounds(latlngs);
-
-    // progress bar
-    // moveProgress();
 }
 
 /**
@@ -110,7 +102,7 @@ function getUserResponseData(data) {
         "optionalComment" : optionalComment,
         "latlng" : latlng,
     };
-    return userResponse
+    return userResponse;
 }
 
 
@@ -127,11 +119,11 @@ function getBoundary(mapPath, allResponses) {
         .then(data => {
             // create a customized geojson that only includes areas with responses
             // add more if needed
-            let allResponsesGeoJson= {
+            let allResponsesGeoJson = {
                 "type": "FeatureCollection",
                 "features" : []
             }
-            data.features.forEach(feature =>{
+            data.features.forEach(feature => {
                 let addFeature = false
                 let customizedFeature = {
                     "type": "Feature",
@@ -150,7 +142,7 @@ function getBoundary(mapPath, allResponses) {
                         "coordinates": feature.geometry.coordinates
                     },
                 }
-                allResponses.forEach(response=> {
+                allResponses.forEach(response => {
                     if (response.zipcode == feature.properties.zcta) {
                         if (response.experience.includes("Negative")) {
                             if (response.caregiver == "Yes") {
@@ -179,26 +171,21 @@ function getBoundary(mapPath, allResponses) {
 
                         addFeature = true
                         // add positive/negative/neutral response to geojson
-                        if(response.experience.includes("Positive"))
-                        {
-                            customizedFeature.properties.positiveResponses.push(response)
+                        if(response.experience.includes("Positive")) {
+                            customizedFeature.properties.positiveResponses.push(response);
                         }
-                        else if (response.experience.includes("Negative"))
-                        {
-                            customizedFeature.properties.negativeResponses.push(response)
+                        else if (response.experience.includes("Negative")) {
+                            customizedFeature.properties.negativeResponses.push(response);
                         }
-                        else if(response.experience.includes("Neutral"))
-                        {
-                            customizedFeature.properties.neutralResponses.push(response)
+                        else if(response.experience.includes("Neutral")) {
+                            customizedFeature.properties.neutralResponses.push(response);
                         }
                         // append current feature to geojson
-                        if(response.caregiver == "Yes")
-                        {
-                            customizedFeature.properties.caregiverResponses.push(response)
+                        if(response.caregiver == "Yes") {
+                            customizedFeature.properties.caregiverResponses.push(response);
                         }
-                        else if (response.caregiver == "No")
-                        {
-                            customizedFeature.properties.nonCaregiverResponses.push(response)
+                        else if (response.caregiver == "No") {
+                            customizedFeature.properties.nonCaregiverResponses.push(response);
                         }
                     }
                 })
@@ -206,8 +193,6 @@ function getBoundary(mapPath, allResponses) {
                     allResponsesGeoJson.features.push(customizedFeature)
             })
             
-            // console.log(allResponsesGeoJson.features.length)
-
             carePositiveLayer = L.geoJSON(allResponsesGeoJson, {
                 style: getStyle,
                 onEachFeature: onEachFeature,
@@ -267,7 +252,6 @@ function getBoundary(mapPath, allResponses) {
  * @param {*} currentZipcode zipcode which you want to highlight
  * @returns returns responses filtered for matching zipcode
  */
-
 function getStyle(feature) {
     // console.log(feature)
     let score = getScoreForRegion(feature);
@@ -280,31 +264,26 @@ function getStyle(feature) {
         }
 }
 
-
 function getScoreForRegion(feature) {
-    let plusScore = feature.properties.positiveResponses.length 
-    let minusScore = feature.properties.negativeResponses.length
-    let neutralScore = feature.properties.neutralResponses.length
-    return (plusScore - minusScore) / (plusScore + minusScore + neutralScore)
+    let plusScore = feature.properties.positiveResponses.length;
+    let minusScore = feature.properties.negativeResponses.length;
+    let neutralScore = feature.properties.neutralResponses.length;
+    return (plusScore - minusScore) / (plusScore + minusScore + neutralScore);
 }
 
 // TODO: May need to come up with new color gradient
 // TODO: Change the colors as you like at https://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3 (Ctrl + Click)
 function getColorFromScore(score) {
-    if(score >= 0.33)
-    {
-        return "#9FF25D" // green
+    if (score >= 0.33) {
+        return "#9FF25D"; // green
     }
-    else if(score >= -0.33)
-    {
-        return "#F2DA5D" //yellow
+    else if (score >= -0.33) {
+        return "#F2DA5D"; //yellow
     }
-    else
-    {
-        return "#F25D5D" //red
+    else {
+        return "#F25D5D"; //red
     }
 }
-
 
 function onEachFeature(feature, layer) {
     layer.on({
@@ -334,55 +313,39 @@ function populateSidebar(e) {
     let layer = e.target
     let storiesHTML = document.getElementById("stories")
     let displayingResponses = []
-    if(displayPositiveResponses)
-    {
-        displayingResponses = displayingResponses.concat(layer.feature.properties.positiveResponses)
+    if (displayPositiveResponses) {
+        displayingResponses = displayingResponses.concat(layer.feature.properties.positiveResponses);
     }
-    if(displayNegativeResponses)
-    {
-        displayingResponses = displayingResponses.concat(layer.feature.properties.negativeResponses)
+    if (displayNegativeResponses) {
+        displayingResponses = displayingResponses.concat(layer.feature.properties.negativeResponses);
     }
-    if(displayNeutralResponses)
-    {
-        displayingResponses = displayingResponses.concat(layer.feature.properties.neutralResponses)
+    if (displayNeutralResponses) {
+        displayingResponses = displayingResponses.concat(layer.feature.properties.neutralResponses);
     }
 
     // filter responses by caregiver  
     displayingResponses = displayingResponses.filter(function (response) {
-        // console.log("display care: ", displayCaregiver)
-        // console.log("current response is a caregiver: ", response.caregiver)
         if (!displayCaregiver && response.caregiver == "Yes") {
           return false; 
         }
         else if (!displayNonCaregiver && response.caregiver == "No") {
           return false; 
-        } else {
+        }
+        else {
           return true; 
         }
       });
-    // console.log(displayingResponses)
-
     
     // create dynamic buttons
     let buttonContainer = document.getElementById("transportModes");
     buttonContainer.innerHTML = ""
     let commuteList = [] // avoid duplicate buttons
 
-    // //Create a show all button 
-    // let showAllButton = document.createElement("button")
-    // showAllButton.textContent = "Show All"
-    // showAllButton.addEventListener("click", function(){
-    //     generateSidebarResponses(storiesHTML, displayingResponses)
-    // })
-    // showAllButton.style.margin = "5px"
-    // buttonContainer.appendChild(showAllButton);
-
     // Create buttons and add onClick
     // Onclick: Get the corresponding response
-    displayingResponses.forEach(response=> {
-        if(commuteList.includes(response.commuteMeans))
-        {
-            return
+    displayingResponses.forEach(response => {
+        if (commuteList.includes(response.commuteMeans)) {
+            return;
         }
         commuteList.push(response.commuteMeans)
         let button = document.createElement("button");
@@ -398,21 +361,17 @@ function populateSidebar(e) {
     generateSidebarResponses(storiesHTML, displayingResponses)
 }
 
-function generateSidebarResponses(sidebarHTML, responses)
-{
-    let style
-    sidebarHTML.innerHTML = ""
+function generateSidebarResponses(sidebarHTML, responses) {
+    let style = "";
+    sidebarHTML.innerHTML = "";
     responses.forEach(response => {
-        if(response.experience.includes("Positive"))
-        {
+        if (response.experience.includes("Positive")) {
             style = `style="background-color: rgb(170, 207, 160)"`
         }
-        else if(response.experience.includes("Negative"))
-        {
+        else if (response.experience.includes("Negative")) {
             style = `style="background-color: rgb(240, 147, 155)"`
         }
-        else if(response.experience.includes("Neutral"))
-        {
+        else if (response.experience.includes("Neutral")) {
             style = `style="background-color: yellow)"`
         }
         sidebarHTML.innerHTML += 
@@ -436,8 +395,7 @@ info.onAdd = function () {
 };
 
 info.update = function (props) {
-    if(props)
-    {
+    if (props) {
     let positiveCount = props.positiveResponses.length
     let negativeCount = props.negativeResponses.length
     let neutralCount = props.neutralResponses.length
@@ -450,17 +408,14 @@ info.update = function (props) {
         + 'Distance to UCLA:<br>' 
         + distanceToUCLA + ' miles' + '<br>'
     }
-    else
-    {
+    else {
         this._div.innerHTML = `Hover over a region to see <br>a summary of the zipcode!`;
-        
     }
 };
 
 info.addTo(map);
 
-function getDistanceToUCLA(latlng)
-{
+function getDistanceToUCLA(latlng) {
     let UCLAlatlng = L.latLng([34.0709, -118.444])
     let currentLatlng = L.latLng(latlng)
     let distance = UCLAlatlng.distanceTo(currentLatlng) / 1609.344
@@ -487,7 +442,6 @@ legend.onAdd = function () {
     return div;
 };
 legend.addTo(map);
-
 
 // EXECUTE THIS CODE
 loadData(DATA_URL)
@@ -527,72 +481,54 @@ document.getElementById("posCareProgress").addEventListener("click", function(e)
     // }
 // }
 
-negativeResponsesLegendHtml.addEventListener("change", toggleNegativeLayer) 
-
-function toggleNegativeLayer(){
-    if(negativeResponsesLegendHtml.checked){
-        if (displayCaregiver)
-        {
+function toggleNegativeLayer() {
+    if (negativeResponsesLegendHtml.checked){
+        if (displayCaregiver) {
             map.addLayer(careNegativeLayer)
         }
-        if(displayNonCaregiver)
-        {
+        if (displayNonCaregiver) {
             map.addLayer(noncareNegativeLayer)
         }
         displayNegativeResponses = true
     }
-    else{
+    else {
         map.removeLayer(careNegativeLayer)
         map.removeLayer(noncareNegativeLayer)
         displayNegativeResponses = false
     }
 }
 
-neutralResponsesLegendHtml.addEventListener("change", toggleNeutralLayer) 
-
 function toggleNeutralLayer(){
-    if(neutralResponsesLegendHtml.checked){
-        if (displayCaregiver)
-        {
+    if (neutralResponsesLegendHtml.checked){
+        if (displayCaregiver) {
             map.addLayer(careNeutralLayer)
         }
-        if(displayNonCaregiver)
-        {
+        if (displayNonCaregiver) {
             map.addLayer(noncareNeutralLayer)
         }
         displayNeutralResponses = true
     }
-    else{
+    else {
         map.removeLayer(careNeutralLayer)
         map.removeLayer(noncareNeutralLayer)
         displayNeutralResponses = false
     }
 }
 
-// caregiverHTML.addEventListener("change", toggleCaregiver)
-
-function toggleCaregiver()
-{   
-    if(caregiverHTML.checked)
-    {  
-        // console.log("caregiver on")
+function toggleCaregiver() {   
+    if (caregiverHTML.checked) {  
         displayCaregiver = true
-        if(displayPositiveResponses)
-        {
+        if (displayPositiveResponses) {
             map.addLayer(carePositiveLayer)
         }
-        if(displayNegativeResponses)
-        {
+        if (displayNegativeResponses) {
             map.addLayer(careNegativeLayer)
         }
-        if(displayNeutralResponses)
-        {
+        if (displayNeutralResponses) {
             map.addLayer(careNeutralLayer)
         }
     }
-    else
-    {
-        // console.log("caregiver off")
+    else {
         displayCaregiver = false
         map.removeLayer(carePositiveLayer)
         map.removeLayer(careNegativeLayer)
@@ -604,25 +540,20 @@ function toggleCaregiver()
 
 function toggleNonCaregiver()
 {   
-    if(nonCaregiverHTML.checked)
-    {  
+    if (nonCaregiverHTML.checked) {  
         // console.log("noncaregiver on")
         displayNonCaregiver = true
-        if(displayPositiveResponses)
-        {
+        if (displayPositiveResponses) {
             map.addLayer(noncarePositiveLayer)
         }
-        if(displayNegativeResponses)
-        {
+        if (displayNegativeResponses) {
             map.addLayer(noncareNegativeLayer)
         }
-        if(displayNeutralResponses)
-        {
+        if (displayNeutralResponses) {
             map.addLayer(noncareNeutralLayer)
         }
     }
-    else
-    {
+    else {
         // console.log("noncaregiver off")
         displayNonCaregiver = false
         map.removeLayer(noncarePositiveLayer)
@@ -640,31 +571,17 @@ var uclaIcon = L.icon({
   
   // Create the UCLA marker
   var marker = L.marker([34.0709, -118.444], { icon: uclaIcon }).addTo(map);
-  
-  // Make the icon a circle using CSS properties
-  marker.on('add', function () {
-    var iconElement = marker.getElement();
-    if (iconElement) {
-      iconElement.style.borderRadius = '50%';
-      iconElement.style.width = '36px';
-      iconElement.style.height = '36px';
-    }
-  });
 
 function moveProgress() {
-    // setTimeout(function(){
-
-    // }, 1000);
-
     let totalCaregiverCount = responseCount["carePosCount"] + responseCount["careNegCount"] + responseCount["careNeuCount"]
     let carePosRatio = (responseCount["carePosCount"] / totalCaregiverCount) * 100
     let careNegRatio = (responseCount["careNegCount"] / totalCaregiverCount) * 100
     let careNeuRatio = (responseCount["careNeuCount"] / totalCaregiverCount) * 100
 
     let totalNoncaregiverCount = responseCount["carePosCount"] + responseCount["careNegCount"] + responseCount["careNeuCount"]
-    let nonPosRatio = (responseCount["nonPosCount"] / totalCaregiverCount) * 100
-    let nonNegRatio = (responseCount["nonNegCount"] / totalCaregiverCount) * 100
-    let nonNeuRatio = (responseCount["nonNeuCount"] / totalCaregiverCount) * 100
+    let nonPosRatio = (responseCount["nonPosCount"] / totalNoncaregiverCount) * 100
+    let nonNegRatio = (responseCount["nonNegCount"] / totalNoncaregiverCount) * 100
+    let nonNeuRatio = (responseCount["nonNeuCount"] / totalNoncaregiverCount) * 100
 
     document.getElementById("posCareProgress").setAttribute("style","width:" + carePosRatio + "%");
     document.getElementById("negCareProgress").setAttribute("style","width:" + careNegRatio + "%");
@@ -673,13 +590,6 @@ function moveProgress() {
     document.getElementById("posNonProgress").setAttribute("style","width:" + nonPosRatio + "%");
     document.getElementById("negNonProgress").setAttribute("style","width:" + nonNegRatio + "%");
     document.getElementById("neuNonProgress").setAttribute("style","width:" + nonNeuRatio + "%");
-
-    // let progressBar = document.getElementById("progressBar");
-
-    // console.log("HERRREEEE");
-    // console.log(getScoreForRegion(carePositiveLayer));
-
-    // bar.style.width = getScoreForRegion(feature.carePositiveLayer) + '%';
 }
 
 // project intro modal popup on load
@@ -699,19 +609,10 @@ window.onclick = function(event) {
         modal.style.display = "none";
     }
 } 
-// console.log("!!!!!!!!!!!!!!!")
 
-let total = careNegativeLayer.getLayers().length;
-// console.log(_.size(careNegativeLayer))
-// console.log(total)
-
-// caregiver info popup modual
+// caregiver/noncaregiver info popup module
 let careInfoPop = document.getElementById("carePop");
 let noncareInfoPop = document.getElementById("noncarePop");
-// let span2 = document.getElementsByClassName("close")[1]; //span element that closes the modal
-// infoButton.onclick = function() {
-//     careInfoPop.style.display = "none";
-// };
 
 function closePopup(element) {
     let popup = document.getElementById(element);
@@ -722,22 +623,3 @@ function openPopup(element) {
     let popup = document.getElementById(element);
     popup.style.display = "block";
 }
-
-
-//   map.on('zoomend', function () {
-//     var currentZoom = map.getZoom();
-//     var updatedIconSize = [36, 36]; // Determine the size of the icon with zoom level
-  
-//     // Adjust the icon size based on the current zoom level
-//     if (currentZoom >= 10 && currentZoom < 15) {
-//       updatedIconSize = [40, 40];
-//     } else if (currentZoom >= 15 && currentZoom < 20) {
-//       updatedIconSize = [50, 50];
-//     } else if (currentZoom >= 20) {
-//       updatedIconSize = [60, 60];
-//     }
-  
-//     // Update the icon size of the marker
-//     uclaIcon.options.iconSize = updatedIconSize;
-//     marker.setIcon(uclaIcon);
-//   });
