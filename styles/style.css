@@ -73,6 +73,7 @@ header {
     grid-template-rows: repeat(3, minmax(0, 1fr));
     align-items: center;
     justify-items: right;  
+    margin-top: -50px;
 }
 
 #placeForButtons {
@@ -264,17 +265,36 @@ li.navitem.right {
     align-items: center;
     text-align: center;
     margin: 40px;
+    margin-bottom: 0px;
     padding: 20px;
     border: 5px solid #D2527F;
     border-radius: 10px;
 }
 
-#button {
+#transportModes {
+    position: absolute;
+    background-color: #F7F6F3;
+    width:100%;
+    margin-top: -20px;
+}
+
+.button {
     font-family: Manrope, sans-serif;
     font-size: 14px;
     border-radius: 8px;
     border-width: 0;
     margin: 6px;
     padding: 10px 12px;
-    background-color: #ccc;  
+    color: #D2527F;
+    background-color: #F7F6F3;
+    border: 2px solid #D2527F;
+}
+
+.button:focus{
+    background-color: #ccc;
+}
+
+.icon{
+    width: 15px;
+    height: 15px;
 }

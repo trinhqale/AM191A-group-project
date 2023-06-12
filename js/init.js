@@ -355,7 +355,7 @@ function populateSidebar(e) {
         commuteList.push(response.commuteMeans)
         let button = document.createElement("button");
         button.textContent = response.commuteMeans;
-        button.id = "button";
+        button.className = "button";
         button.addEventListener("click", function () {
             console.log("Button clicked: " + response.commuteMeans);
             let filteredResponses = displayingResponses.filter(res => res.commuteMeans == response.commuteMeans)
@@ -385,10 +385,10 @@ function generateSidebarResponses(sidebarHTML, responses)
         }
         sidebarHTML.innerHTML += 
         `<div class="response" ${style}> 
-        <img src='assets/home-icon.png'> ${response.zipcode} <br>
-        <img src='assets/bus-icon.png'> ${response.commuteMeans} <br> 
-        <img src='assets/caregiver-icon.png'> Caregiver: ${response.caregiver} <br> 
-        Household: ${response.household} <br> <br>
+        <img src='assets/zipcode.png' class="icon"> ${response.zipcode} <br>
+        <img src='assets/car.png' class="icon"> ${response.commuteMeans} <br> 
+        <img src='assets/carriage.png' class="icon"> Caregiver: ${response.caregiver} <br> 
+        <img src='assets/household.png' class="icon"> Household: ${response.household} <br> <br>
         <b>How is your work life balance affected by the way you commute?</b> <br> ${response.WLBStory} <br><br>` 
         + ((response.caregiver == "Yes")? `<b> How do your family responsibilities impact your commute?</b> <br> ${response.caregiverStory} <br><br>`: ``)
         + ((response.optionalComment.length > 0)? `<b>Is there anything else you would like to share?</b> <br> ${response.optionalComment} )` : ``)
