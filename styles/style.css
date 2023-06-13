@@ -1,7 +1,7 @@
 body {
-    display: grid;
+    /* display: grid;
     grid-template-rows: auto auto auto;
-    grid-template-areas: "header" "main_content";
+    grid-template-areas: "header" "main_content"; */
     background-color: #F7F6F3;
     gap: 10px;
     font-family: Manrope, sans-serif;
@@ -576,30 +576,30 @@ li.navitem.right {
 }
 
 /* Adjust the styling for the about section */
-#about {
+/* #about {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 150px 20px; /* Adjust the padding values to create space around the content */
+    padding: 150px 20px;
     background-color: #F7F6F3;
     font-family: 'Manrope', sans-serif;
   }
   
   #about h1 {
-    text-align: center; /* Center-align the "About Us" heading */
+    text-align: center;
   }
   
   #about h2 {
     font-family: 'Gelica', serif;
     font-weight: 400;
     color: #D2527F;
-    margin-top: 20px; /* Add margin to create space between the headings and paragraphs */
-    text-align: left; /* Set the text alignment to left */
+    margin-top: 20px;
+    text-align: left;
   }
   
   #about p {
     margin-bottom: 10px;
-    padding: 0 20px; /* Add padding to the left and right of the paragraph text */
+    padding: 0 20px;
   }
   
   .about-navbar {
@@ -615,13 +615,13 @@ li.navitem.right {
     position: absolute;
     top: 0;
     left: 0;
-    margin: 10px; /* Adjust the margins as needed */
+    margin: 10px; 
   }
   
   #about #logo {
-    height: 40px; /* Adjust the height of the logo as needed */
+    height: 40px;
     width: auto;
-  }
+  } */
 
 #introButtonDiv {
     justify-content: center;
