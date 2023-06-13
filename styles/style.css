@@ -88,6 +88,7 @@ header {
     grid-row: 1;
     grid-column-start: 3;
     margin-top: 50px;
+    margin-left: 400px;
 }
 
 #careImage {
@@ -461,12 +462,12 @@ li.navitem.right {
     height: 400px;
     position: relative;
     z-index: 99999999;
-    width: 30%;
+    width: 300px;
     grid-row: 1;
     grid-column-start: 1;
     grid-column-end: 3;
     margin-top: 140px;
-    margin-left: 15%;
+    margin-left: 20%;
     overflow: scroll;
     display: none;
 }
@@ -475,14 +476,15 @@ li.navitem.right {
     height: 400px;
     position: relative;
     z-index: 99999999;
-    width: 30%;
+    width: 300px;
     grid-row: 1;
     grid-column-start: 3;
-    grid-column-end: 1;
     margin-top: 140px;
-    margin-left: 15%;
+    margin-right: 15%;
+    margin-left: 130px;
     overflow: scroll;
     display: none;
+    overflow-x: hidden;
 }
 
 #careBubble p, #noncareBubble p {
@@ -505,6 +507,20 @@ li.navitem.right {
     top: 1.5em;
     right: 97.5%;
     rotate: -90deg;
+    border: 0.75rem solid transparent;
+    border-top: none;
+    border-bottom-color: #fff;
+    filter: drop-shadow(0 -0.0625rem 0.0625rem rgba(0, 0, 0, .1));
+}
+
+#noncareBubble p::before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    top: 1.5em;
+    left: 97.5%;
+    rotate: 90deg;
     border: 0.75rem solid transparent;
     border-top: none;
     border-bottom-color: #fff;
