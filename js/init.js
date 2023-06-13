@@ -472,70 +472,70 @@ function getDistanceToUCLA(latlng) {
 loadData(DATA_URL)
 
 // Toggle Layers
-document.getElementById("posCareProgress").addEventListener("click", function(e) {
-    if (map.hasLayer(carePositiveLayer)) {
-        map.removeLayer(carePositiveLayer);
-        document.getElementById("posCareProgress").style.opacity = 0.3;
-    }
-    else {
-        map.addLayer(carePositiveLayer);
-        document.getElementById("posCareProgress").style.opacity = 1;
-    }
-});
-
-document.getElementById("neuCareProgress").addEventListener("click", function(e) {
-    if (map.hasLayer(careNeutralLayer)) {
-        map.removeLayer(careNeutralLayer);
-        document.getElementById("neuCareProgress").style.opacity = 0.3;
-
-    }
-    else {
-        map.addLayer(careNeutralLayer);
-        document.getElementById("neuCareProgress").style.opacity = 1;
-    }
-});
-
-document.getElementById("negCareProgress").addEventListener("click", function(e) {
-    if (map.hasLayer(careNegativeLayer)) {
-        map.removeLayer(careNegativeLayer);
-        document.getElementById("negCareProgress").style.opacity = 0.3;
-
-    }
-    else {
-        map.addLayer(careNegativeLayer);
-        document.getElementById("negCareProgress").style.opacity = 1;
-
-    }
-});
-
-document.getElementById("posNonProgress").addEventListener("click", function(e) {
-    if (map.hasLayer(noncarePositiveLayer)) {
-        map.removeLayer(noncarePositiveLayer);
-        document.getElementById("posNonProgress").style.opacity = 0.3;
-
-    }
-    else {
-        map.addLayer(noncarePositiveLayer);
-        document.getElementById("posNonProgress").style.opacity = 1;
-
-    }
-});
-
-document.getElementById("neuNonProgress").addEventListener("click", function(e) {
-    if (map.hasLayer(noncareNeutralLayer)) {
-        map.removeLayer(noncareNeutralLayer);
-        document.getElementById("neuNonProgress").style.opacity = 0.3;
-
-    }
-    else {
-        map.addLayer(noncareNeutralLayer);
-        document.getElementById("neuNonProgress").style.opacity = 1;
-
-    }
-});
-
 // Comment out because we don't need it
-// TODO: delete this maybe
+// TODO: delete this maybe in the next push
+// document.getElementById("posCareProgress").addEventListener("click", function(e) {
+    //     if (map.hasLayer(carePositiveLayer)) {
+//         map.removeLayer(carePositiveLayer);
+//         document.getElementById("posCareProgress").style.opacity = 0.3;
+//     }
+//     else {
+//         map.addLayer(carePositiveLayer);
+//         document.getElementById("posCareProgress").style.opacity = 1;
+//     }
+// });
+
+// document.getElementById("neuCareProgress").addEventListener("click", function(e) {
+//     if (map.hasLayer(careNeutralLayer)) {
+//         map.removeLayer(careNeutralLayer);
+//         document.getElementById("neuCareProgress").style.opacity = 0.3;
+
+//     }
+//     else {
+//         map.addLayer(careNeutralLayer);
+//         document.getElementById("neuCareProgress").style.opacity = 1;
+//     }
+// });
+
+// document.getElementById("negCareProgress").addEventListener("click", function(e) {
+//     if (map.hasLayer(careNegativeLayer)) {
+//         map.removeLayer(careNegativeLayer);
+//         document.getElementById("negCareProgress").style.opacity = 0.3;
+
+//     }
+//     else {
+//         map.addLayer(careNegativeLayer);
+//         document.getElementById("negCareProgress").style.opacity = 1;
+
+//     }
+// });
+
+// document.getElementById("posNonProgress").addEventListener("click", function(e) {
+//     if (map.hasLayer(noncarePositiveLayer)) {
+//         map.removeLayer(noncarePositiveLayer);
+//         document.getElementById("posNonProgress").style.opacity = 0.3;
+
+//     }
+//     else {
+//         map.addLayer(noncarePositiveLayer);
+//         document.getElementById("posNonProgress").style.opacity = 1;
+
+//     }
+// });
+
+// document.getElementById("neuNonProgress").addEventListener("click", function(e) {
+//     if (map.hasLayer(noncareNeutralLayer)) {
+//         map.removeLayer(noncareNeutralLayer);
+//         document.getElementById("neuNonProgress").style.opacity = 0.3;
+
+//     }
+//     else {
+//         map.addLayer(noncareNeutralLayer);
+//         document.getElementById("neuNonProgress").style.opacity = 1;
+
+//     }
+// });
+
 // document.getElementById("negNonProgress").addEventListener("click", function(e) {
 //     if (map.hasLayer(noncareNegativeLayer)) {
 //         map.removeLayer(noncareNegativeLayer);
