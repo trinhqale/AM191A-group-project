@@ -42,8 +42,8 @@ header {
 
 .main {
     grid-area: main_content;
-    padding-left: 8%;
-    padding-right: 8%;
+    padding-left: 2%;
+    padding-right: 2%;
 }
 
 #hero {
@@ -62,15 +62,41 @@ header {
     column-gap: 1%;
 }
 
+#imageContainer {
+    display: grid;
+    grid-template-columns: 0.1fr 1fr 0.1fr;
+    grid-template-areas: "image" "map" "image";
+}
+
 #the_map {
     height:75vh;
-    grid-area: main_map;
+    /* grid-area: main_map;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    grid-template-rows: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(3, minmax(0, 1fr)); */
+    grid-row: 1;
+    grid-column: span 3/ -1;
     align-items: center;
     justify-items: right;  
-    margin-top: -10px;
+    margin: 0px 50px 0px 50px;
+}
+
+#noncareImage{
+    height: 70vh;
+    position: relative;
+    z-index: 999999;
+    grid-row: 1;
+    grid-column-start: 3;
+    margin-top: 50px;
+}
+
+#careImage {
+    height: 70vh;
+    position: relative;
+    z-index: 999999;
+    grid-row: 1;
+    grid-column-start: 1;
+    margin-top: 50px;
 }
 
 #placeForButtons {
@@ -405,3 +431,7 @@ li.navitem.right {
     text-decoration: none;
     cursor: pointer;
   } 
+
+.leaflet-left {
+    left: 200px;
+}
