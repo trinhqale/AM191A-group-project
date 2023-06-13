@@ -474,11 +474,16 @@ document.getElementById("clickableCare").addEventListener("click", function(e) {
         map.removeLayer(careNegativeLayer);
         map.removeLayer(carePositiveLayer);
         map.removeLayer(careNeutralLayer);
+        document.getElementById("clickableCare").setAttribute("style","background-color:#ccc");
+
+        
     }
     else {
         map.addLayer(careNegativeLayer);
         map.addLayer(carePositiveLayer);
         map.addLayer(careNeutralLayer);
+        document.getElementById("clickableCare").setAttribute("style","background-color:#F7F6F3");
+
     }
     console.log("Caregiver clicked!")
 });
@@ -490,11 +495,14 @@ document.getElementById("clickableNonCare").addEventListener("click", function(e
         map.removeLayer(noncareNegativeLayer);
         map.removeLayer(noncarePositiveLayer);
         map.removeLayer(noncareNeutralLayer);
+        document.getElementById("clickableNonCare").setAttribute("style","background-color:#ccc;border-color:#7D8CC4");
     }
     else {
         map.addLayer(noncareNegativeLayer);
         map.addLayer(noncarePositiveLayer);
         map.addLayer(noncareNeutralLayer);
+        document.getElementById("clickableNonCare").setAttribute("style","background-color:#F7F6F3;border-color:#7D8CC4");
+
     }
     console.log("Non-Caregiver clicked!")
 });
@@ -503,6 +511,7 @@ document.getElementById("careButton").addEventListener("click", function(e) {
     map.removeLayer(noncareNegativeLayer);
     map.removeLayer(noncarePositiveLayer);
     map.removeLayer(noncareNeutralLayer);
+    document.getElementById("clickableNonCare").setAttribute("style","background-color:#ccc;border-color:#7D8CC4");
     modal.style.display = "none";
 });
 
@@ -510,6 +519,7 @@ document.getElementById("noncareButton").addEventListener("click", function(e) {
     map.removeLayer(careNegativeLayer);
     map.removeLayer(carePositiveLayer);
     map.removeLayer(careNeutralLayer);
+    document.getElementById("clickableCare").setAttribute("style","background-color:#ccc");
     modal.style.display = "none";
 });
 
