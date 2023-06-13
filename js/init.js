@@ -294,7 +294,6 @@ function onEachFeature(feature, layer) {
     });
 }
 
-
 /**
  * Handle the highlight of the features
  * @param {*} e : event
@@ -333,8 +332,6 @@ function populateTable(allResponses) {
     
 }
 
-
-// TODO: make changes to sidebar here
 function populateSidebar(e) {
     let layer = e.target
     let careStories = document.getElementById("careBubble");
@@ -379,46 +376,12 @@ function populateSidebar(e) {
           return true; 
         }
       });
-    
-    // // create dynamic buttons
-    // let buttonContainer = document.getElementById("transportModes");
-    // buttonContainer.innerHTML = ""
-    // let commuteList = [] // avoid duplicate buttons
-
-    // // Create buttons and add onClick
-    // // Onclick: Get the corresponding response
-    // displayingResponses.forEach(response => {
-    //     if (commuteList.includes(response.commuteMeans)) {
-    //         return;
-    //     }
-    //     commuteList.push(response.commuteMeans)
-    //     let button = document.createElement("button");
-    //     button.textContent = response.commuteMeans;
-    //     button.className = "button";
-    //     button.addEventListener("click", function () {
-    //         // console.log("Button clicked: " + response.commuteMeans);
-    //         let filteredResponses = displayingResponses.filter(res => res.commuteMeans == response.commuteMeans)
-    //         generateSidebarResponses(storiesHTML, filteredResponses)
-    //     });
-    //     buttonContainer.appendChild(button);
-    // });
-
 }
 
 function generateSidebarResponses(stories, responses) {
     let style = "";
     stories.innerHTML = "";
     responses.forEach(response => {
-
-        // if (response.experience.includes("Positive")) {
-        //     style = `style="background-color: rgb(170, 207, 160)"`
-        // }
-        // else if (response.experience.includes("Negative")) {
-        //     style = `style="background-color: rgb(240, 147, 155)"`
-        // }
-        // else if (response.experience.includes("Neutral")) {
-        //     style = `style="background-color: yellow)"`
-        // }
         stories.innerHTML += 
         `<p> 
         <img src='assets/zipcode.png' class="icon"> ${response.zipcode} <br>
@@ -458,8 +421,6 @@ info.update = function (props) {
     }
 };
 
-// info.addTo(map);
-
 function getDistanceToUCLA(latlng) {
     let UCLAlatlng = L.latLng([34.0709, -118.444])
     let currentLatlng = L.latLng(latlng)
@@ -470,85 +431,6 @@ function getDistanceToUCLA(latlng) {
 
 // EXECUTE THIS CODE
 loadData(DATA_URL)
-
-// Toggle Layers
-// Comment out because we don't need it
-// TODO: delete this maybe in the next push
-// document.getElementById("posCareProgress").addEventListener("click", function(e) {
-    //     if (map.hasLayer(carePositiveLayer)) {
-//         map.removeLayer(carePositiveLayer);
-//         document.getElementById("posCareProgress").style.opacity = 0.3;
-//     }
-//     else {
-//         map.addLayer(carePositiveLayer);
-//         document.getElementById("posCareProgress").style.opacity = 1;
-//     }
-// });
-
-// document.getElementById("neuCareProgress").addEventListener("click", function(e) {
-//     if (map.hasLayer(careNeutralLayer)) {
-//         map.removeLayer(careNeutralLayer);
-//         document.getElementById("neuCareProgress").style.opacity = 0.3;
-
-//     }
-//     else {
-//         map.addLayer(careNeutralLayer);
-//         document.getElementById("neuCareProgress").style.opacity = 1;
-//     }
-// });
-
-// document.getElementById("negCareProgress").addEventListener("click", function(e) {
-//     if (map.hasLayer(careNegativeLayer)) {
-//         map.removeLayer(careNegativeLayer);
-//         document.getElementById("negCareProgress").style.opacity = 0.3;
-
-//     }
-//     else {
-//         map.addLayer(careNegativeLayer);
-//         document.getElementById("negCareProgress").style.opacity = 1;
-
-//     }
-// });
-
-// document.getElementById("posNonProgress").addEventListener("click", function(e) {
-//     if (map.hasLayer(noncarePositiveLayer)) {
-//         map.removeLayer(noncarePositiveLayer);
-//         document.getElementById("posNonProgress").style.opacity = 0.3;
-
-//     }
-//     else {
-//         map.addLayer(noncarePositiveLayer);
-//         document.getElementById("posNonProgress").style.opacity = 1;
-
-//     }
-// });
-
-// document.getElementById("neuNonProgress").addEventListener("click", function(e) {
-//     if (map.hasLayer(noncareNeutralLayer)) {
-//         map.removeLayer(noncareNeutralLayer);
-//         document.getElementById("neuNonProgress").style.opacity = 0.3;
-
-//     }
-//     else {
-//         map.addLayer(noncareNeutralLayer);
-//         document.getElementById("neuNonProgress").style.opacity = 1;
-
-//     }
-// });
-
-// document.getElementById("negNonProgress").addEventListener("click", function(e) {
-//     if (map.hasLayer(noncareNegativeLayer)) {
-//         map.removeLayer(noncareNegativeLayer);
-//         document.getElementById("negNonProgress").style.opacity = 0.3;
-
-//     }
-//     else {
-//         map.addLayer(noncareNegativeLayer);
-//         document.getElementById("negNonProgress").style.opacity = 1;
-
-//     }
-// });
-
 
 // add UCLA marker with custom design
 var uclaIcon = L.icon({
@@ -644,52 +526,47 @@ document.getElementById("clickableNonCare").addEventListener("click", function(e
     console.log("Non-Caregiver clicked!")
 });
 
-let careHoverDiv = document.getElementById("careProgress")
-careHoverDiv.addEventListener("mouseover", function(e){
-    console.log(e)
-    popup = document.createElement("div");
-    let posCount = responseCount["carePosCount"]
-    let negCount = responseCount["careNegCount"]
-    let neuCount = responseCount["careNeuCount"]
-    popup.className = "popup";
-    popup.innerHTML = `Positive Responses: ${posCount}<br>
-    Negative Responses: ${negCount}<br>
-    Neutral Responses: ${neuCount}`;
+// create popup with number of pos, neg, and neu responses when hovering over status bar
+let careHoverDiv = document.getElementById("careProgress");
+let noncareHoverDiv = document.getElementById("nonProgress");
+let popup = document.createElement("div");
+popup.setAttribute("id", "popup");
 
-    // "Positive Responses: " + posCount + "\n" 
-    //                     + "Negative Responses: " + negCount + "\n"
-    //                     + "Neutral Responses: " + neuCount;
-    careHoverDiv.appendChild(popup);
-    console.log("hovered!")
-})
+function openProgressPop(caregiver, rating) {
+    if (caregiver) {
+        if (rating == 'pos') {
+            popup.innerHTML = `Positive Responses: ${responseCount["carePosCount"]}`;
+        }
+        else if (rating == 'neg') {
+            popup.innerHTML = `Negative Responses: ${responseCount["careNegCount"]}`;
+        }
+        else if (rating == 'neu') {
+            popup.innerHTML = `Neutral Responses: ${responseCount["careNeuCount"]}`;
+        }
+        careHoverDiv.appendChild(popup);
+    }
+    else if (!caregiver) {
+        if (rating == 'pos') {
+            popup.innerHTML = `Positive Responses: ${responseCount["nonPosCount"]}`;
+            popup.setAttribute("style","border-color:#9FF25D");
+        }
+        else if (rating == 'neg') {
+            popup.innerHTML = `Negative Responses: ${responseCount["nonNegCount"]}`;
+            popup.setAttribute("style","border-color:#F25D5D"); 
+        }
+        else if (rating == 'neu') {
+            popup.innerHTML = `Neutral Responses: ${responseCount["nonNeuCount"]}`;
+            popup.setAttribute("style","border-color:#F2DA5D");
+        }
+        noncareHoverDiv.appendChild(popup);
+    }
+}
 
-careHoverDiv.addEventListener("mouseout", function() {
-    if (popup) {
+function closeProgressPop() {
+    if (careHoverDiv.contains(popup)) {
         careHoverDiv.removeChild(popup);
-      popup = null;
     }
-  });
-
-  let noncareHoverDiv = document.getElementById("nonProgress")
-  noncareHoverDiv.addEventListener("mouseover", function(e){
-    console.log(e)
-    popup = document.createElement("div");
-    popup.className = "popup";
-    let posCount = responseCount["nonPosCount"]
-    let negCount = responseCount["nonNegCount"]
-    let neuCount = responseCount["nonNeuCount"]
-    popup.className = "popup";
-    popup.innerHTML = `Positive Responses: ${posCount}<br>
-    Negative Responses: ${negCount}<br>
-    Neutral Responses: ${neuCount}`;
-
-    noncareHoverDiv.appendChild(popup);
-    console.log("hovered!")
-})
-
-noncareHoverDiv.addEventListener("mouseout", function() {
-    if (popup) {
+    if (noncareHoverDiv.contains(popup)) {
         noncareHoverDiv.removeChild(popup);
-      popup = null;
     }
-  });
+}

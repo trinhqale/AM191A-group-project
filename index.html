@@ -32,7 +32,7 @@
         <div>
             <ul class="navbar">
                 <li class="navitem logo">
-                    <a> LOGO </a>
+                    <a><img src="assets/logo.png" id="logo"></a>
                 </li>
                 <li class="navitem right"><a id="storyButton" href="https://forms.gle/j3HPawxrJzzCoeQX7" target="_blank">Add Story</a></li>
                 <li class="navitem right"><a href="#">About</a></li>
@@ -47,10 +47,10 @@
             <div class="modal-content">
             <span class="close">&times;</span>
             <div id="modalInnerDiv">
-                <img src="assets/logo.png">
+                <img src="assets/logo.png" style="margin-top:10px">
                 <div>
                     <h2 style="text-align: center;">Gender Inequality in Transportation and Work-Life Balance</h2>
-                    <p> Female faculty members at UCLA, encompassing both caregivers and non-caregivers, have distinct commutes and the accompanying responsibilities that shape their work-life balance. By acknowledging this distinction in our mapplication, users can actively participate in personalized visualizations and narratives that cater to their specific interests. This interactive map experience empowers users to delve into the intricacies of work-life balance and gender inequalities in transportation, gaining valuable insights from the perspectives of female faculty members at UCLA who identify as caregivers or non-caregivers. </p>
+                    <p> Female faculty members at UCLA, encompassing both caregivers and non-caregivers, have distinct commutes and the accompanying responsibilities that shape their work-life balance. This interactive map experience empowers users to delve into the intricacies of work-life balance and gender inequalities in transportation, gaining valuable insights from the perspectives of female faculty members at UCLA who identify as caregivers or non-caregivers. </p>
                 </div>
             </div>
             </div>
@@ -103,16 +103,16 @@
             <div id="toggleContainer">
                 <div class="careToggle" id="clickableCare"><h2>Caregiver <button id="careInfo" onclick="openPopup('carePop')"><img src="assets/info.png" class="icon"></button></h2>
                     <div id="careProgress" class="Progress">
-                        <div id="posCareProgress"></div>
-                        <div id="neuCareProgress"></div>
-                        <div id="negCareProgress"></div>
+                        <div onmouseover="openProgressPop(true, 'pos')" onmouseout="closeProgressPop()" id="posCareProgress"></div>
+                        <div onmouseover="openProgressPop(true, 'neu')" onmouseout="closeProgressPop()" id="neuCareProgress"></div>
+                        <div onmouseover="openProgressPop(true, 'neg')" onmouseout="closeProgressPop()" id="negCareProgress"></div>
                     </div>
                 </div>
                 <div class="careToggle" id="clickableNonCare"><h2>Non-caregiver <button id="noncareInfo" onclick="openPopup('noncarePop')"><img src="assets/info.png" class="icon"></button> </h2>
                     <div id="nonProgress" class="Progress">
-                        <div id="posNonProgress"></div>
-                        <div id="neuNonProgress"></div>
-                        <div id="negNonProgress"></div>
+                        <div onmouseover="openProgressPop(false, 'pos')" onmouseout="closeProgressPop()" id="posNonProgress"></div>
+                        <div onmouseover="openProgressPop(false, 'neu')" onmouseout="closeProgressPop()" id="neuNonProgress"></div>
+                        <div onmouseover="openProgressPop(false, 'neg')" onmouseout="closeProgressPop()" id="negNonProgress"></div>
                     </div>
                 </div>
             </div>
