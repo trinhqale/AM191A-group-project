@@ -485,13 +485,13 @@ let careInfoPop = document.getElementById("carePop");
 let noncareInfoPop = document.getElementById("noncarePop");
 
 function closePopup(element) {
-    let popup = document.getElementById(element);
-    popup.style.display = "none";
+    let popupBox = document.getElementById(element);
+    popupBox.setAttribute("style","display:none");
 }
 
 function openPopup(element) {
-    let popup = document.getElementById(element);
-    popup.style.display = "block";
+    let popupBox = document.getElementById(element);
+    popupBox.setAttribute("style","display:block");
 }
 
 document.getElementById("clickableCare").addEventListener("click", function(e) {
@@ -548,15 +548,15 @@ function openProgressPop(caregiver, rating) {
     else if (!caregiver) {
         if (rating == 'pos') {
             popup.innerHTML = `Positive Responses: ${responseCount["nonPosCount"]}`;
-            popup.setAttribute("style","border-color:#9FF25D");
+            // popup.setAttribute("style","border-color:#9FF25D");
         }
         else if (rating == 'neg') {
             popup.innerHTML = `Negative Responses: ${responseCount["nonNegCount"]}`;
-            popup.setAttribute("style","border-color:#F25D5D"); 
+            // popup.setAttribute("style","border-color:#F25D5D"); 
         }
         else if (rating == 'neu') {
             popup.innerHTML = `Neutral Responses: ${responseCount["nonNeuCount"]}`;
-            popup.setAttribute("style","border-color:#F2DA5D");
+            // popup.setAttribute("style","border-color:#F2DA5D");
         }
         noncareHoverDiv.appendChild(popup);
     }

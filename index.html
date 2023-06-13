@@ -102,14 +102,14 @@
         </div>
         <div id="content">
             <div id="toggleContainer">
-                <div class="careToggle" id="clickableCare"><h2>Caregiver <button id="careInfo" onclick="openPopup('carePop')"><img src="assets/info.png" class="icon"></button></h2>
+                <div class="careToggle" id="clickableCare"><h2>Caregiver <img src="assets/info.png" class="icon" id="careInfo" onmouseover="openPopup('carePop')" onmouseout="closePopup('carePop')"></h2>
                     <div id="careProgress" class="Progress">
                         <div onmouseover="openProgressPop(true, 'pos')" onmouseout="closeProgressPop()" id="posCareProgress"></div>
                         <div onmouseover="openProgressPop(true, 'neu')" onmouseout="closeProgressPop()" id="neuCareProgress"></div>
                         <div onmouseover="openProgressPop(true, 'neg')" onmouseout="closeProgressPop()" id="negCareProgress"></div>
                     </div>
                 </div>
-                <div class="careToggle" id="clickableNonCare"><h2>Non-caregiver <button id="noncareInfo" onclick="openPopup('noncarePop')"><img src="assets/info.png" class="icon"></button> </h2>
+                <div class="careToggle" id="clickableNonCare"><h2>Non-caregiver <img src="assets/info.png" class="icon" id="noncareInfo" onmouseover="openPopup('noncarePop')"" onmouseout="closePopup('noncarePop')"></h2>
                     <div id="nonProgress" class="Progress">
                         <div onmouseover="openProgressPop(false, 'pos')" onmouseout="closeProgressPop()" id="posNonProgress"></div>
                         <div onmouseover="openProgressPop(false, 'neu')" onmouseout="closeProgressPop()" id="neuNonProgress"></div>
