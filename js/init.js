@@ -463,7 +463,7 @@ info.update = function (props) {
 function getDistanceToUCLA(latlng) {
     let UCLAlatlng = L.latLng([34.0709, -118.444])
     let currentLatlng = L.latLng(latlng)
-    let distance = UCLAlatlng.distanceTo(currentLatlng) / 1609.344
+    let distance = UCLAlatlng.distanceTo(currentLatlng) / 1609.344 //convert meter to miles
     distance = distance.toFixed(2)
     return distance
 }
@@ -534,18 +534,20 @@ document.getElementById("neuNonProgress").addEventListener("click", function(e) 
     }
 });
 
-document.getElementById("negNonProgress").addEventListener("click", function(e) {
-    if (map.hasLayer(noncareNegativeLayer)) {
-        map.removeLayer(noncareNegativeLayer);
-        document.getElementById("negNonProgress").style.opacity = 0.3;
+// Comment out because we don't need it
+// TODO: delete this maybe
+// document.getElementById("negNonProgress").addEventListener("click", function(e) {
+//     if (map.hasLayer(noncareNegativeLayer)) {
+//         map.removeLayer(noncareNegativeLayer);
+//         document.getElementById("negNonProgress").style.opacity = 0.3;
 
-    }
-    else {
-        map.addLayer(noncareNegativeLayer);
-        document.getElementById("negNonProgress").style.opacity = 1;
+//     }
+//     else {
+//         map.addLayer(noncareNegativeLayer);
+//         document.getElementById("negNonProgress").style.opacity = 1;
 
-    }
-});
+//     }
+// });
 
 
 // add UCLA marker with custom design
@@ -609,3 +611,85 @@ function openPopup(element) {
     let popup = document.getElementById(element);
     popup.style.display = "block";
 }
+
+document.getElementById("clickableCare").addEventListener("click", function(e) {
+    if (map.hasLayer(careNegativeLayer) 
+        && map.hasLayer(carePositiveLayer)
+        && map.hasLayer(careNeutralLayer)) {
+        map.removeLayer(careNegativeLayer);
+        map.removeLayer(carePositiveLayer);
+        map.removeLayer(careNeutralLayer);
+    }
+    else {
+        map.addLayer(careNegativeLayer);
+        map.addLayer(carePositiveLayer);
+        map.addLayer(careNeutralLayer);
+    }
+    console.log("Caregiver clicked!")
+});
+
+document.getElementById("clickableNonCare").addEventListener("click", function(e) {
+    if (map.hasLayer(noncareNegativeLayer) 
+        && map.hasLayer(noncarePositiveLayer)
+        && map.hasLayer(noncareNeutralLayer)) {
+        map.removeLayer(noncareNegativeLayer);
+        map.removeLayer(noncarePositiveLayer);
+        map.removeLayer(noncareNeutralLayer);
+    }
+    else {
+        map.addLayer(noncareNegativeLayer);
+        map.addLayer(noncarePositiveLayer);
+        map.addLayer(noncareNeutralLayer);
+    }
+    console.log("Non-Caregiver clicked!")
+});
+
+let careHoverDiv = document.getElementById("careProgress")
+careHoverDiv.addEventListener("mouseover", function(e){
+    console.log(e)
+    popup = document.createElement("div");
+    let posCount = responseCount["carePosCount"]
+    let negCount = responseCount["careNegCount"]
+    let neuCount = responseCount["careNeuCount"]
+    popup.className = "popup";
+    popup.innerHTML = `Positive Responses: ${posCount}<br>
+    Negative Responses: ${negCount}<br>
+    Neutral Responses: ${neuCount}`;
+
+    // "Positive Responses: " + posCount + "\n" 
+    //                     + "Negative Responses: " + negCount + "\n"
+    //                     + "Neutral Responses: " + neuCount;
+    careHoverDiv.appendChild(popup);
+    console.log("hovered!")
+})
+
+careHoverDiv.addEventListener("mouseout", function() {
+    if (popup) {
+        careHoverDiv.removeChild(popup);
+      popup = null;
+    }
+  });
+
+  let noncareHoverDiv = document.getElementById("nonProgress")
+  noncareHoverDiv.addEventListener("mouseover", function(e){
+    console.log(e)
+    popup = document.createElement("div");
+    popup.className = "popup";
+    let posCount = responseCount["nonPosCount"]
+    let negCount = responseCount["nonNegCount"]
+    let neuCount = responseCount["nonNeuCount"]
+    popup.className = "popup";
+    popup.innerHTML = `Positive Responses: ${posCount}<br>
+    Negative Responses: ${negCount}<br>
+    Neutral Responses: ${neuCount}`;
+
+    noncareHoverDiv.appendChild(popup);
+    console.log("hovered!")
+})
+
+noncareHoverDiv.addEventListener("mouseout", function() {
+    if (popup) {
+        noncareHoverDiv.removeChild(popup);
+      popup = null;
+    }
+  });
