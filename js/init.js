@@ -52,7 +52,6 @@ function loadData(url) {
     })
 }
 
-
 /**
  * Prepare
  * @param {*} results 
@@ -298,13 +297,15 @@ function populateTable(allResponses) {
     allResponses.forEach(response => {
         let row = table.insertRow(rowNum);
 
-        let caregiverCell = row.insertCell(0);
-        let commuteModeCell = row.insertCell(1);
-        let experienceCell = row.insertCell(2);
-        let workLifeCell = row.insertCell(3);
-        let familyCell = row.insertCell(4);
-        let addtlCell = row.insertCell(5);
+        let zipcodeCell = row.insertCell(0);
+        let caregiverCell = row.insertCell(1);
+        let commuteModeCell = row.insertCell(2);
+        let experienceCell = row.insertCell(3);
+        let workLifeCell = row.insertCell(4);
+        let familyCell = row.insertCell(5);
+        let addtlCell = row.insertCell(6);
 
+        zipcodeCell.innerHTML = response["zipcode"];
         caregiverCell.innerHTML = response["caregiver"];
         commuteModeCell.innerHTML = response["commuteMeans"];
         experienceCell.innerHTML = response["experience"];
@@ -313,6 +314,25 @@ function populateTable(allResponses) {
         addtlCell.innerHTML = response["optionalComment"];
     })
     
+}
+
+function showDataTable() {
+    let DATA_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCF24Aalv8tZ3neF_4LZQ21KLokn5jtZgpc9-wiAuDhT1_LXNYtxKRtsM-eo0UAzhGUHqQvJCgCNmI/pub?output=csv";
+    Papa.parse(DATA_URL, {
+        header: true,
+        download: true,
+        complete: results => {
+            data = results.data;
+
+            let allResponses = [];
+            data.forEach(column => {
+                    let userResponse = getUserResponseData(column)
+                    allResponses.push(userResponse)
+                });
+            populateTable(allResponses);
+        }
+    })
+    document.getElementById("storyTableDiv").setAttribute("style", "display:block");
 }
 
 function populateSidebar(e) {
@@ -398,7 +418,7 @@ function getDistanceToUCLA(latlng) {
 }
 
 // EXECUTE THIS CODE
-loadData(DATA_URL)
+loadData(DATA_URL);
 
 // add UCLA marker with custom design
 var uclaIcon = L.icon({

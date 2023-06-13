@@ -48,12 +48,35 @@
     <p>"Girls just want to have fun" is a map application that aims to empower female faculty at UCLA, including caregivers and non-caregivers. In the context of our project, caregivers are people who have the added responsibility of taking care of children or loved ones, while non-caregivers do not have this responsibility. Our project highlights the experiences of being a female faculty member at UCLA and how factors such as their commute affect their work-life balance. Overall, our project seeks to empower by encouraging female faculty at UCLA to share their experiences with their commute and work-life balance in a way that can be shared with future generations of women coming to UCLA.</p>
     <h2>What ethical considerations were taken into consideration in creating this application?</h2>
     <p>Our project observed data justice principles and prioritized protecting the privacy of the participants by anonymizing their data and ensuring it is stored securely. We approached the topic of work-life balance and commute experiences with respect and sensitivity, by encouraging participants to share their experiences voluntarily and ensuring that their stories were presented in a respectful manner.</p>
+    <button class="button" id="dataButton" onclick="showDataTable()" style="background-color: #7D8CC4;">View the Data!</button>
     <h2>Long-term impact</h2>
     <p>In terms of the long-term impact of this project, we desire to empower women at UCLA to share their commuting experiences and the hurdles they face in their daily routine to have a satisfactory work-life balance. To do this, we will be in contact with UCLA Transportation and the Gender Studies department on campus. We will also speak with Madeline Brozen (Deputy Director of Lewis Center for Regional Policy Studies), who has conducted prior research on how women travel. These resources involve women and transportation at UCLA, and we believe that this application can support these institutions working to improve the commuting experience of women. We hope that this project will continue to carry impact by empowering women to share their experiences with their commutes as well as their work-life balance and ultimately direct more resources to the improvement of the commuting experiences and work-life balance of UCLA female faculty.</p>
     <h2>Acknowledgements</h2>
     <p>We couldn't have created this project without the support of many people. Thank you to <b>Professor Albert Kochaphum</b> for guiding us through every process and for being a great teacher! Thank you to <b>Yufa Zhong</b> and <b>Milo Kearney</b> for helping when challenges would arise and for being the most amazing friends you could ever ask for!</p>
-</div>
-
+    <div id="storyTableDiv">
+            
+            <div id="storyTable"> 
+              <span class="close" onclick="closePopup('storyTableDiv')" style="margin-right: 40px;">&times;</span>
+                <h3 id="zipcodeTableTitle">Data Responses </h3>
+                <table id="responseTable" class="sortable-theme-light" data-sortable>
+                    <thead>
+                        <tr>
+                            <th>Zipcode</th>
+                            <th onclick="sortTable(0)">Caregiver?</th>
+                            <th onclick="sortTable(1)">Commute Mode</th>
+                            <th>Work Life Balance Rating</th>
+                            <th>How is your work life balance affected by the way you commute?</th>
+                            <th>How do your family responsibilities impact your commute?</th>
+                            <th>Is there anything else you would like to share?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+  </div>
+<br><br>
   <div id="footer">
     copyright © 2023
   </div>

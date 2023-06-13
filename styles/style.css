@@ -454,7 +454,7 @@ li.navitem.right {
 
 #storyTableDiv {
     position: fixed; 
-    display: block;
+    display: none;
     z-index: 9999999; 
     left: 0;
     top: 0;
@@ -467,7 +467,7 @@ li.navitem.right {
 
 #storyTable {
     background-color: #F7F6F3;
-    margin: 15%;
+    margin: 5%;
     padding: 20px;
     border: 1px solid #888;
     border-radius: 10px;
