@@ -542,3 +542,13 @@ li.navitem.right {
 /* #bubble body {
     padding: 0.2rem;
 } */
+
+.popup {
+    position: absolute;
+    background-color: #000;
+    color: #fff;
+    padding: 5px;
+    border-radius: 4px;
+    font-size: 14px;
+    bottom: -40%;
+  }
