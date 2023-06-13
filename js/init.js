@@ -368,7 +368,7 @@ function generateSidebarResponses(stories, responses) {
     responses.forEach(response => {
         zipLatLng = response.latlng;
         stories.innerHTML += 
-        `<p> 
+        `<p ${style}> 
         <img src='assets/zipcode.png' class="icon"> ${response.zipcode} <br>
         <img src='assets/car.png' class="icon"> ${response.commuteMeans} <br> 
         <img src='assets/carriage.png' class="icon"> Caregiver: ${response.caregiver} <br> 
@@ -504,27 +504,30 @@ function openProgressPop(caregiver, rating) {
     if (caregiver) {
         if (rating == 'pos') {
             popup.innerHTML = `Positive Responses: ${responseCount["carePosCount"]}`;
+            popup.setAttribute("style","border-color:#9FF25D");
         }
         else if (rating == 'neg') {
             popup.innerHTML = `Negative Responses: ${responseCount["careNegCount"]}`;
+            popup.setAttribute("style","border-color:#F25D5D"); 
         }
         else if (rating == 'neu') {
             popup.innerHTML = `Neutral Responses: ${responseCount["careNeuCount"]}`;
+            popup.setAttribute("style","border-color:#F2DA5D");
         }
         careHoverDiv.appendChild(popup);
     }
     else if (!caregiver) {
         if (rating == 'pos') {
             popup.innerHTML = `Positive Responses: ${responseCount["nonPosCount"]}`;
-            // popup.setAttribute("style","border-color:#9FF25D");
+            popup.setAttribute("style","border-color:#9FF25D");
         }
         else if (rating == 'neg') {
             popup.innerHTML = `Negative Responses: ${responseCount["nonNegCount"]}`;
-            // popup.setAttribute("style","border-color:#F25D5D"); 
+            popup.setAttribute("style","border-color:#F25D5D"); 
         }
         else if (rating == 'neu') {
             popup.innerHTML = `Neutral Responses: ${responseCount["nonNeuCount"]}`;
-            // popup.setAttribute("style","border-color:#F2DA5D");
+            popup.setAttribute("style","border-color:#F2DA5D");
         }
         noncareHoverDiv.appendChild(popup);
     }

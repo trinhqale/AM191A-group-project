@@ -573,3 +573,52 @@ li.navitem.right {
     position: absolute;
     margin-top: -10px;
 }
+
+/* Adjust the styling for the about section */
+#about {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 150px 20px; /* Adjust the padding values to create space around the content */
+    background-color: #F7F6F3;
+    font-family: 'Manrope', sans-serif;
+  }
+  
+  #about h1 {
+    text-align: center; /* Center-align the "About Us" heading */
+  }
+  
+  #about h2 {
+    font-family: 'Gelica', serif;
+    font-weight: 400;
+    color: #D2527F;
+    margin-top: 20px; /* Add margin to create space between the headings and paragraphs */
+    text-align: left; /* Set the text alignment to left */
+  }
+  
+  #about p {
+    margin-bottom: 10px;
+    padding: 0 20px; /* Add padding to the left and right of the paragraph text */
+  }
+  
+  .about-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    background-color: white;
+  }
+  
+  #about .logo-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 10px; /* Adjust the margins as needed */
+  }
+  
+  #about #logo {
+    height: 40px; /* Adjust the height of the logo as needed */
+    width: auto;
+  }
+  
