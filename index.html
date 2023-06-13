@@ -50,21 +50,33 @@
         </div>
         <div id="carePop">
             <span class="close" onclick="closePopup('carePop')">&times;</span>
-            <img src="assets/mom.png" style="height: 100px;">
-            <p>Caregivers among UCLA female faculty have responsibilities to support the well-being of their children or loved ones.</p>
+            <div id="carePopInnerDiv">
+                <img src="assets/mom.png" style="height: 200px; margin-right: 20px;">
+                <div>
+                    <h2>Caregivers</h2>
+                    <p>They are among UCLA female faculty and staff who have responsibilities to support the well-being of their children or loved ones.</p>
+                </div>
+            </div>
+            
         </div>
         <div id="noncarePop">
             <span class="close" onclick="closePopup('noncarePop')">&times;</span>
-            <img src="assets/singlewoman.png" style="height: 100px;">
-            <p>Non-caregivers do not have the added responsibility of caring for family members or loved ones.</p>
+            <div id="carePopInnerDiv">
+                <img src="assets/singlewoman.png" style="height: 200px; margin-right: 20px;">
+                <div>
+                    <h2>Non-caregivers</h2>
+                    <p>They are UCLA female faculty and staff who do not have the added responsibility of caring for family members or loved ones.</p>
+                </div>
+            </div>
         </div>
         <div id="hero">
             <h1 style="text-align:center; line-height:0px;">Girls Just Want to Have Fun:</h1>
             <h3 style="text-align:center;">Gender Inequality in Transportation and Work-Life Balance</h3>
+            <p><b>Instruction:</b> Choose a group of caregiver, non-caregiver(or both) that you're interested in. Click on a zipcode region to read different stories.</p>
         </div>
         <div id="content">
-            <div id="the_map">
-                <div class="careToggle" style="grid-column: 2;"><h2>Caregiver <button id="careInfo" onclick="openPopup('carePop')"><img src="assets/info.png" class="icon"></button></h2>
+            <div id="toggleContainer">
+                <div class="careToggle"><h2>Caregiver <button id="careInfo" onclick="openPopup('carePop')"><img src="assets/info.png" class="icon"></button></h2>
                     <div id="careProgress">
                         <div id="posCareProgress"></div>
                         <div id="neuCareProgress"></div>
@@ -78,6 +90,8 @@
                         <div id="negNonProgress"></div>
                     </div>
                 </div>
+            </div>
+            <div id="the_map">
             </div>
             <!-- <div id="sidebar">
                 <div id="transportModes"> </div>
