@@ -573,3 +573,35 @@ li.navitem.right {
     position: absolute;
     margin-top: -10px;
 }
+
+/* Adjust the styling for the about section */
+#about {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 20px;
+    padding: 20px;
+    background-color: #F7F6F3;
+    font-family: 'Manrope', sans-serif;
+  }
+ 
+ 
+  #about h2 {
+    font-family: 'Gelica', serif;
+    font-weight: 400;
+    color: #D2527F;
+  }
+   #about p {
+    margin-bottom: 10px;
+  }
+ 
+ 
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    background-color: white;
+  }
+  
+ 
