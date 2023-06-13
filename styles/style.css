@@ -355,10 +355,10 @@ li.navitem.right {
 }
 
  /* background modal */
- .modal {
-    display: none; 
+ .modal { 
     position: fixed; 
-    z-index: 9999999; 
+    display: block;
+    z-index: 999999999999; 
     left: 0;
     top: 0;
     width: 100%; 
@@ -373,16 +373,14 @@ li.navitem.right {
     margin: 15% auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 80%; 
+    width: 50%; 
     border-radius: 10px;
-    display: none;
   }
 
 #modalInnerDiv {
     display: grid;
     grid-template-columns: 0.25fr 1fr;
     grid-template-areas: "logo" "modal_content";
-    display: none;
 }
 
 .modal-content img {
