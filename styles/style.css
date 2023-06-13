@@ -563,7 +563,7 @@ li.navitem.right {
     padding: 8px;
     border-radius: 4px;
     font-size: 14px;
-    bottom: -40%;
+    bottom: -12.5%;
     background-color: #F7F6F3;
     border: 2px solid #333;
   }
@@ -595,7 +595,7 @@ li.navitem.right {
   }
  
  
-  #about .navbar {
+ #about .navbar {
     position: fixed;
     top: 0;
     left: 0;
