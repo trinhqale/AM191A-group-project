@@ -9,7 +9,7 @@ body {
 }
 
 h1, h2 {
-    font-family: gelica, sans-serif;
+    font-family: Rock Salt, sans-serif;
     font-style: normal;
           font-weight: 400;
     color: #D2527F;
@@ -324,7 +324,7 @@ li.navitem.right {
     border-radius: 10px;
     background-color: #F7F6F3;
     padding: 20px;
-    width: 200px;
+    width: 250px;
     justify-self: center;
 }
 
