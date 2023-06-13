@@ -456,3 +456,12 @@ li.navitem.right {
     border: 1px solid #888;
     border-radius: 10px;
   }
+  .popup {
+    position: absolute;
+    background-color: #000;
+    color: #fff;
+    padding: 5px;
+    border-radius: 4px;
+    font-size: 14px;
+    bottom: -40%;
+  }
