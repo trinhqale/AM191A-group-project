@@ -563,7 +563,7 @@ li.navitem.right {
     padding: 8px;
     border-radius: 4px;
     font-size: 14px;
-    bottom: -12.5%;
+    bottom: -40%;
     background-color: #F7F6F3;
     border: 2px solid #333;
   }
@@ -576,26 +576,32 @@ li.navitem.right {
 
 /* Adjust the styling for the about section */
 #about {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-gap: 20px;
-    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 100px 20px; /* Adjust the padding values to create space around the content */
     background-color: #F7F6F3;
     font-family: 'Manrope', sans-serif;
   }
- 
- 
+  
+  #about h1 {
+    text-align: center; /* Center-align the "About Us" heading */
+  }
+  
   #about h2 {
     font-family: 'Gelica', serif;
     font-weight: 400;
     color: #D2527F;
+    margin-top: 20px; /* Add margin to create space between the headings and paragraphs */
+    text-align: left; /* Set the text alignment to left */
   }
-   #about p {
+  
+  #about p {
     margin-bottom: 10px;
+    padding: 0 20px; /* Add padding to the left and right of the paragraph text */
   }
- 
- 
- #about .navbar {
+  
+  #about .navbar {
     position: fixed;
     top: 0;
     left: 0;
@@ -604,4 +610,3 @@ li.navitem.right {
     background-color: white;
   }
   
- 
