@@ -254,7 +254,6 @@ function getBoundary(mapPath, allResponses) {
  * @returns returns responses filtered for matching zipcode
  */
 function getStyle(feature) {
-    // console.log(feature)
     let score = getScoreForRegion(feature);
         return {
             fillColor: getColorFromScore(score),
@@ -288,24 +287,8 @@ function getColorFromScore(score) {
 
 function onEachFeature(feature, layer) {
     layer.on({
-        mouseover: highlightFeature,
-        mouseout: resetHighlight,
         click: populateSidebar
     });
-}
-
-/**
- * Handle the highlight of the features
- * @param {*} e : event
- */
-function highlightFeature(e) {
-    let layer = e.target;
-    layer.bringToFront();
-    info.update(layer.feature.properties);
-}
-
-function resetHighlight(e) {
-    info.update();
 }
 
 function populateTable(allResponses) {
@@ -381,7 +364,9 @@ function populateSidebar(e) {
 function generateSidebarResponses(stories, responses) {
     let style = "";
     stories.innerHTML = "";
+    let zipLatLng = [];
     responses.forEach(response => {
+        zipLatLng = response.latlng;
         stories.innerHTML += 
         `<p> 
         <img src='assets/zipcode.png' class="icon"> ${response.zipcode} <br>
@@ -393,6 +378,8 @@ function generateSidebarResponses(stories, responses) {
         + ((response.optionalComment.length > 0)? `<b>Is there anything else you would like to share?</b> <br> ${response.optionalComment} )` : ``)
         + `</p>` 
     })
+    console.log(zipLatLng[0]);
+    map.panTo(new L.LatLng(zipLatLng[0], zipLatLng[1]));
 }
 // Add info for mouse hovering 
 let info = L.control({position : "bottomleft"});
@@ -400,25 +387,6 @@ info.onAdd = function () {
     this._div = L.DomUtil.create('div', 'info'); 
     this.update();
     return this._div;
-};
-
-info.update = function (props) {
-    if (props) {
-    let positiveCount = props.positiveResponses.length
-    let negativeCount = props.negativeResponses.length
-    let neutralCount = props.neutralResponses.length
-    let totalCount = positiveCount + negativeCount + neutralCount
-    let latlng = [props.latitude, props.longitude]
-    let distanceToUCLA = getDistanceToUCLA(latlng)
-    this._div.innerHTML = 
-        'Zipcode: ' + props.zcta + 
-        '<br>Total Responses: ' + totalCount + '<br>'
-        + 'Distance to UCLA:<br>' 
-        + distanceToUCLA + ' miles' + '<br>'
-    }
-    else {
-        this._div.innerHTML = `Hover over a region to see <br>a summary of the zipcode!`;
-    }
 };
 
 function getDistanceToUCLA(latlng) {
