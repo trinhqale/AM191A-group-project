@@ -1,5 +1,4 @@
 # Gender Inequality in Transportation and Work-Life Balance among UCLA Female Faculty
-> Our project aims to shed light on the social issue of gender inequality in transportation and the challenges in acheiving healthy work-life balance among female faculty and staff at UCLA. This platform encourages women to share experiences and insights related to commuting and work-life balance in a way that can be shared with future generations of women at UCLA. Through our mapplication, we hope to empower women and highlight their struggles in representation by drawing attention to areas that could progress to a more equitable environment. While developing this tool, our group project may encounter technical challenges such as ensuring that the mapplication is user-friendly and is accessible to people of different backgrounds and disabilities. Another technical challenge we may encounter is addressing the issue of scalability, as the mapplication’s user base grows and more data needs to be added. Some ethical problems that will be taken into consideration while producing the mapplication is ensuring a fair and unbiased presentation of data and analysis, making sure that the mapplication is not used to discriminate against individuals or groups, and by observing user privacy.
 
 ## Table of Contents
 * [Objective](#Objective)
@@ -29,12 +28,11 @@ Our mapplication is intended to empower female faculty at UCLA, including both c
 
 
 ## Features
-![Example screenshot](./img/screenshot.png)
-<!-- If you have screenshots you'd like to share, include them here. -->
-
 
 
 ## Screenshots
+![Example screenshot](./img/screenshot.png)
+<!-- If you have screenshots you'd like to share, include them here. -->
 
 
 ## Acknowledgements
