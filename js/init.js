@@ -337,7 +337,9 @@ function populateTable(allResponses) {
 // TODO: make changes to sidebar here
 function populateSidebar(e) {
     let layer = e.target
-    let storiesHTML = document.getElementById("stories")
+    let careStories = document.getElementById("careBubble");
+    let noncareStories = document.getElementById("noncareBubble");
+    
     let displayingResponses = []
     if (displayPositiveResponses) {
         displayingResponses = displayingResponses.concat(layer.feature.properties.positiveResponses);
@@ -351,8 +353,24 @@ function populateSidebar(e) {
 
     // filter responses by caregiver  
     displayingResponses = displayingResponses.filter(function (response) {
+        if (response.caregiver == "Yes") {
+            generateSidebarResponses(careStories, displayingResponses);
+            document.getElementById("careStories").setAttribute("style","display:block");
+        }
+        else {
+            document.getElementById("careStories").setAttribute("style","display:hidden");
+        }
+    
+        if (response.caregiver == "No") {
+            generateSidebarResponses(noncareStories, displayingResponses);
+            document.getElementById("noncareStories").setAttribute("style","display:block");
+        }
+        else {
+            document.getElementById("noncareStories").setAttribute("style","display:hidden");
+        }
+
         if (!displayCaregiver && response.caregiver == "Yes") {
-          return false; 
+            return false;
         }
         else if (!displayNonCaregiver && response.caregiver == "No") {
           return false; 
@@ -362,47 +380,47 @@ function populateSidebar(e) {
         }
       });
     
-    // create dynamic buttons
-    let buttonContainer = document.getElementById("transportModes");
-    buttonContainer.innerHTML = ""
-    let commuteList = [] // avoid duplicate buttons
+    // // create dynamic buttons
+    // let buttonContainer = document.getElementById("transportModes");
+    // buttonContainer.innerHTML = ""
+    // let commuteList = [] // avoid duplicate buttons
 
-    // Create buttons and add onClick
-    // Onclick: Get the corresponding response
-    displayingResponses.forEach(response => {
-        if (commuteList.includes(response.commuteMeans)) {
-            return;
-        }
-        commuteList.push(response.commuteMeans)
-        let button = document.createElement("button");
-        button.textContent = response.commuteMeans;
-        button.className = "button";
-        button.addEventListener("click", function () {
-            // console.log("Button clicked: " + response.commuteMeans);
-            let filteredResponses = displayingResponses.filter(res => res.commuteMeans == response.commuteMeans)
-            generateSidebarResponses(storiesHTML, filteredResponses)
-        });
-        buttonContainer.appendChild(button);
-    });
-    generateSidebarResponses(storiesHTML, displayingResponses)
+    // // Create buttons and add onClick
+    // // Onclick: Get the corresponding response
+    // displayingResponses.forEach(response => {
+    //     if (commuteList.includes(response.commuteMeans)) {
+    //         return;
+    //     }
+    //     commuteList.push(response.commuteMeans)
+    //     let button = document.createElement("button");
+    //     button.textContent = response.commuteMeans;
+    //     button.className = "button";
+    //     button.addEventListener("click", function () {
+    //         // console.log("Button clicked: " + response.commuteMeans);
+    //         let filteredResponses = displayingResponses.filter(res => res.commuteMeans == response.commuteMeans)
+    //         generateSidebarResponses(storiesHTML, filteredResponses)
+    //     });
+    //     buttonContainer.appendChild(button);
+    // });
+
 }
 
-function generateSidebarResponses(sidebarHTML, responses) {
+function generateSidebarResponses(stories, responses) {
     let style = "";
-    sidebarHTML.innerHTML = "";
+    stories.innerHTML = "";
     responses.forEach(response => {
 
-        if (response.experience.includes("Positive")) {
-            style = `style="background-color: rgb(170, 207, 160)"`
-        }
-        else if (response.experience.includes("Negative")) {
-            style = `style="background-color: rgb(240, 147, 155)"`
-        }
-        else if (response.experience.includes("Neutral")) {
-            style = `style="background-color: yellow)"`
-        }
-        sidebarHTML.innerHTML += 
-        `<div class="response" ${style}> 
+        // if (response.experience.includes("Positive")) {
+        //     style = `style="background-color: rgb(170, 207, 160)"`
+        // }
+        // else if (response.experience.includes("Negative")) {
+        //     style = `style="background-color: rgb(240, 147, 155)"`
+        // }
+        // else if (response.experience.includes("Neutral")) {
+        //     style = `style="background-color: yellow)"`
+        // }
+        stories.innerHTML += 
+        `<p> 
         <img src='assets/zipcode.png' class="icon"> ${response.zipcode} <br>
         <img src='assets/car.png' class="icon"> ${response.commuteMeans} <br> 
         <img src='assets/carriage.png' class="icon"> Caregiver: ${response.caregiver} <br> 
@@ -410,7 +428,7 @@ function generateSidebarResponses(sidebarHTML, responses) {
         <b>How is your work life balance affected by the way you commute?</b> <br> ${response.WLBStory} <br><br>` 
         + ((response.caregiver == "Yes")? `<b> How do your family responsibilities impact your commute?</b> <br> ${response.caregiverStory} <br><br>`: ``)
         + ((response.optionalComment.length > 0)? `<b>Is there anything else you would like to share?</b> <br> ${response.optionalComment} )` : ``)
-        + `</div>` 
+        + `</p>` 
     })
 }
 // Add info for mouse hovering 
