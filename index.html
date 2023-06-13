@@ -21,6 +21,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <!-- turf -->
     <script src='https://unpkg.com/@turf/turf@6.3.0/turf.min.js'></script>
+
+    <!-- Sortable Table-->
+    <link rel="stylesheet" href="sortable-theme-light.css" />
+    <script src="sortable.min.js"></script>
 </head>
 
 <body>
@@ -71,6 +75,26 @@
                 </div>
             </div>
         </div>
+        <div id="storyTableDiv">
+            <span class="close" onclick="closePopup('storyTableDiv')">&times;</span>
+            <div id="storyTable"> 
+                <h3 id="zipcodeTableTitle">Zipcode: </h3>
+                <table id="responseTable" class="sortable-theme-light" data-sortable>
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable(0)">Caregiver?</th>
+                            <th onclick="sortTable(1)">Commute Mode</th>
+                            <th>Overall, what would you rate your work life balance?</th>
+                            <th>How is your work life balance affected by the way you commute?</th>
+                            <th>How do your family responsibilities impact your commute?</th>
+                            <th>Is there anything else you would like to share?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
         <div id="hero">
             <h1 style="text-align:center; line-height:0px;">Girls Just Want to Have Fun:</h1>
             <h3 style="text-align:center;">Female UCLA Faculty & Staff Work-Life Balance</h3>
@@ -109,6 +133,8 @@
         Copyright(2023)
     </footer>
     <script src="js/init.js"></script>
+    <script src="js/sortTable.js"></script>
+
 </body>
 
 </html>

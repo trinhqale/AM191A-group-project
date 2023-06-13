@@ -64,6 +64,7 @@ function processData(data) {
             allResponses.push(userResponse)
         });
     getBoundary(MAP_PATH, allResponses);
+    populateTable(allResponses);
     // map bounds
     let latlngs = [];
     allResponses.forEach(response => {
@@ -308,6 +309,31 @@ function resetHighlight(e) {
     info.update();
 }
 
+function populateTable(allResponses) {
+    let table = document.getElementById("responseTable");
+
+    let rowNum = 1;
+    allResponses.forEach(response => {
+        let row = table.insertRow(rowNum);
+
+        let caregiverCell = row.insertCell(0);
+        let commuteModeCell = row.insertCell(1);
+        let experienceCell = row.insertCell(2);
+        let workLifeCell = row.insertCell(3);
+        let familyCell = row.insertCell(4);
+        let addtlCell = row.insertCell(5);
+
+        caregiverCell.innerHTML = response["caregiver"];
+        commuteModeCell.innerHTML = response["commuteMeans"];
+        experienceCell.innerHTML = response["experience"];
+        workLifeCell.innerHTML = response["WLBStory"];
+        familyCell.innerHTML = response["caregiverStory"];
+        addtlCell.innerHTML = response["optionalComment"];
+    })
+    
+}
+
+
 // TODO: make changes to sidebar here
 function populateSidebar(e) {
     let layer = e.target
@@ -365,6 +391,7 @@ function generateSidebarResponses(sidebarHTML, responses) {
     let style = "";
     sidebarHTML.innerHTML = "";
     responses.forEach(response => {
+
         if (response.experience.includes("Positive")) {
             style = `style="background-color: rgb(170, 207, 160)"`
         }
