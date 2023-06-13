@@ -579,7 +579,7 @@ li.navitem.right {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 100px 20px; /* Adjust the padding values to create space around the content */
+    padding: 150px 20px; /* Adjust the padding values to create space around the content */
     background-color: #F7F6F3;
     font-family: 'Manrope', sans-serif;
   }
@@ -601,7 +601,7 @@ li.navitem.right {
     padding: 0 20px; /* Add padding to the left and right of the paragraph text */
   }
   
-  #about .navbar {
+  .about-navbar {
     position: fixed;
     top: 0;
     left: 0;
@@ -610,35 +610,15 @@ li.navitem.right {
     background-color: white;
   }
   
-/* Adjust the styling for the about section */
-#about {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-gap: 20px;
-    padding: 20px;
-    background-color: #F7F6F3;
-    font-family: 'Manrope', sans-serif;
-  }
-  #about h2 {
-    font-family: Rock Salt, serif;
-    font-weight: 400;
-    color: #D2527F;
-  }
- 
-  #about h2 {
-    font-family: Manrope, serif;
-    font-weight: 400;
-    color: #D2527F;
-  }
-   #about p {
-    margin-bottom: 10px;
-  }
- #about .navbar {
-    position: fixed;
+  #about .logo-container {
+    position: absolute;
     top: 0;
     left: 0;
-    right: 0;
-    z-index: 9999;
-    background-color: white;
+    margin: 10px; /* Adjust the margins as needed */
   }
- 
+  
+  #about #logo {
+    height: 40px; /* Adjust the height of the logo as needed */
+    width: auto;
+  }
+  
