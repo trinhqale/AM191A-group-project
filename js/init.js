@@ -450,119 +450,80 @@ loadData(DATA_URL)
 document.getElementById("posCareProgress").addEventListener("click", function(e) {
     if (map.hasLayer(carePositiveLayer)) {
         map.removeLayer(carePositiveLayer);
+        document.getElementById("posCareProgress").style.opacity = 0.3;
     }
     else {
         map.addLayer(carePositiveLayer);
+        document.getElementById("posCareProgress").style.opacity = 1;
     }
 });
 
-// function togglePositiveLayer(){
-//     if (map.hasLayer(carePositiveLayer)) {
-//         map.removeLayer(carePositiveLayer);
-//     }
-//     else {
-//         map.addLayer(carePositiveLayer);
-//     }
-    // if(positiveResponsesLegendHtml.checked){
-    //     if (displayCaregiver)
-    //     {
-    //         map.addLayer(carePositiveLayer)
-    //     }
-    //     if(displayNonCaregiver)
-    //     {
-    //         map.addLayer(noncarePositiveLayer)
-    //     }
-    //     displayPositiveResponses = true
-    // }
-    // else{
-    //     map.removeLayer(carePositiveLayer)
-    //     map.removeLayer(noncarePositiveLayer)
-    //     displayPositiveResponses = false
-    // }
-// }
+document.getElementById("neuCareProgress").addEventListener("click", function(e) {
+    if (map.hasLayer(careNeutralLayer)) {
+        map.removeLayer(careNeutralLayer);
+        document.getElementById("neuCareProgress").style.opacity = 0.3;
 
-function toggleNegativeLayer() {
-    if (negativeResponsesLegendHtml.checked){
-        if (displayCaregiver) {
-            map.addLayer(careNegativeLayer)
-        }
-        if (displayNonCaregiver) {
-            map.addLayer(noncareNegativeLayer)
-        }
-        displayNegativeResponses = true
     }
     else {
-        map.removeLayer(careNegativeLayer)
-        map.removeLayer(noncareNegativeLayer)
-        displayNegativeResponses = false
+        map.addLayer(careNeutralLayer);
+        document.getElementById("neuCareProgress").style.opacity = 1;
     }
-}
+});
 
-function toggleNeutralLayer(){
-    if (neutralResponsesLegendHtml.checked){
-        if (displayCaregiver) {
-            map.addLayer(careNeutralLayer)
-        }
-        if (displayNonCaregiver) {
-            map.addLayer(noncareNeutralLayer)
-        }
-        displayNeutralResponses = true
+document.getElementById("negCareProgress").addEventListener("click", function(e) {
+    if (map.hasLayer(careNegativeLayer)) {
+        map.removeLayer(careNegativeLayer);
+        document.getElementById("negCareProgress").style.opacity = 0.3;
+
     }
     else {
-        map.removeLayer(careNeutralLayer)
-        map.removeLayer(noncareNeutralLayer)
-        displayNeutralResponses = false
-    }
-}
+        map.addLayer(careNegativeLayer);
+        document.getElementById("negCareProgress").style.opacity = 1;
 
-function toggleCaregiver() {   
-    if (caregiverHTML.checked) {  
-        displayCaregiver = true
-        if (displayPositiveResponses) {
-            map.addLayer(carePositiveLayer)
-        }
-        if (displayNegativeResponses) {
-            map.addLayer(careNegativeLayer)
-        }
-        if (displayNeutralResponses) {
-            map.addLayer(careNeutralLayer)
-        }
+    }
+});
+
+document.getElementById("posNonProgress").addEventListener("click", function(e) {
+    if (map.hasLayer(noncarePositiveLayer)) {
+        map.removeLayer(noncarePositiveLayer);
+        document.getElementById("posNonProgress").style.opacity = 0.3;
+
     }
     else {
-        displayCaregiver = false
-        map.removeLayer(carePositiveLayer)
-        map.removeLayer(careNegativeLayer)
-        map.removeLayer(careNeutralLayer)
+        map.addLayer(noncarePositiveLayer);
+        document.getElementById("posNonProgress").style.opacity = 1;
+
     }
-}
+});
 
-// nonCaregiverHTML.addEventListener("change", toggleNonCaregiver)
+document.getElementById("neuNonProgress").addEventListener("click", function(e) {
+    if (map.hasLayer(noncareNeutralLayer)) {
+        map.removeLayer(noncareNeutralLayer);
+        document.getElementById("neuNonProgress").style.opacity = 0.3;
 
-function toggleNonCaregiver()
-{   
-    if (nonCaregiverHTML.checked) {  
-        // console.log("noncaregiver on")
-        displayNonCaregiver = true
-        if (displayPositiveResponses) {
-            map.addLayer(noncarePositiveLayer)
-        }
-        if (displayNegativeResponses) {
-            map.addLayer(noncareNegativeLayer)
-        }
-        if (displayNeutralResponses) {
-            map.addLayer(noncareNeutralLayer)
-        }
     }
     else {
-        // console.log("noncaregiver off")
-        displayNonCaregiver = false
-        map.removeLayer(noncarePositiveLayer)
-        map.removeLayer(noncareNegativeLayer)
-        map.removeLayer(noncareNeutralLayer)
-    }
-}
+        map.addLayer(noncareNeutralLayer);
+        document.getElementById("neuNonProgress").style.opacity = 1;
 
-// TODO: add UCLA marker with custom design
+    }
+});
+
+document.getElementById("negNonProgress").addEventListener("click", function(e) {
+    if (map.hasLayer(noncareNegativeLayer)) {
+        map.removeLayer(noncareNegativeLayer);
+        document.getElementById("negNonProgress").style.opacity = 0.3;
+
+    }
+    else {
+        map.addLayer(noncareNegativeLayer);
+        document.getElementById("negNonProgress").style.opacity = 1;
+
+    }
+});
+
+
+// add UCLA marker with custom design
 var uclaIcon = L.icon({
     iconUrl: 'assets/ucla.png', // will be replaced by custom icon
     iconSize: [40, 40],
