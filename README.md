@@ -40,7 +40,7 @@ Our mapplication is intended to empower female faculty at UCLA, including both c
 - JavaScript Files: The project includes external JavaScript files, such as "init.js" and "sortTable.js," which contain scripts for initializing the map and sorting the table, respectively.
 
 ## Screenshots
-![Example screenshot](./img/screenshot.png)
+![Website usage demo(Project-demo.gif)
 <!-- If you have screenshots you'd like to share, include them here. -->
 
 
