@@ -441,6 +441,11 @@ window.onload = (event) =>  {
 spans[0].onclick = function() {
     modal.style.display = "none";
 }
+
+showAllButton = document.getElementById("showAllButton");
+showAllButton.onclick = function() {
+    modal.style.display = "none";
+}
 //clicks anywhere outside close modal
 window.onclick = function(event) {
     if (event.target == modal) {
@@ -492,6 +497,20 @@ document.getElementById("clickableNonCare").addEventListener("click", function(e
         map.addLayer(noncareNeutralLayer);
     }
     console.log("Non-Caregiver clicked!")
+});
+
+document.getElementById("careButton").addEventListener("click", function(e) {
+    map.removeLayer(noncareNegativeLayer);
+    map.removeLayer(noncarePositiveLayer);
+    map.removeLayer(noncareNeutralLayer);
+    modal.style.display = "none";
+});
+
+document.getElementById("noncareButton").addEventListener("click", function(e) {
+    map.removeLayer(careNegativeLayer);
+    map.removeLayer(carePositiveLayer);
+    map.removeLayer(careNeutralLayer);
+    modal.style.display = "none";
 });
 
 // create popup with number of pos, neg, and neu responses when hovering over status bar

@@ -293,15 +293,16 @@ li.navitem.right {
     font-size: 14px;
     border-radius: 8px;
     border-width: 0;
-    margin: 6px;
+    margin-left: 40px;
+    margin-right: 40px;
+    margin-bottom: 10px;
     padding: 10px 12px;
-    color: #D2527F;
-    background-color: #F7F6F3;
-    border: 2px solid #D2527F;
+    background-color: #D2527F;
+    color: #F7F6F3;
 }
 
-.button:focus{
-    background-color: #ccc;
+.button:focus, .button:hover{
+    background-color: #781839;
 }
 
 .icon{
@@ -621,4 +622,9 @@ li.navitem.right {
     height: 40px; /* Adjust the height of the logo as needed */
     width: auto;
   }
+
+#introButtonDiv {
+    justify-content: center;
+    display: flex;
+}
   
