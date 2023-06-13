@@ -257,10 +257,10 @@ function getStyle(feature) {
     let score = getScoreForRegion(feature);
         return {
             fillColor: getColorFromScore(score),
-            weight: 0.5,
+            weight: 0,
             color: '#666',
             dashArray: '',
-            fillOpacity: 0.7
+            fillOpacity: 1,
         }
 }
 
@@ -413,7 +413,7 @@ info.update = function (props) {
     }
 };
 
-info.addTo(map);
+// info.addTo(map);
 
 function getDistanceToUCLA(latlng) {
     let UCLAlatlng = L.latLng([34.0709, -118.444])
@@ -422,26 +422,6 @@ function getDistanceToUCLA(latlng) {
     distance = distance.toFixed(2)
     return distance
 }
-
-// add legend
-
-let legend = L.control({position: 'bottomright'});
-
-legend.onAdd = function () {
-    let div = L.DomUtil.create('div', 'info legend');
-    let grades = [0.33,-0.33,-1]; // change here
-    let labels = ["Positive", "Neutral", "Negative"]
-    div.innerHTML = 'Overall Work-Life<br>Balance<br>' 
-    for (let i = 0; i < grades.length; i++) {
-        div.innerHTML +=
-            '<i style="background:' 
-            + getColorFromScore(grades[i])
-            + '"></i> '  
-            + (labels[i]) + '<br>';
-    }
-    return div;
-};
-legend.addTo(map);
 
 // EXECUTE THIS CODE
 loadData(DATA_URL)

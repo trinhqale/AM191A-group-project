@@ -60,19 +60,17 @@ header {
     grid-template-areas: "main_map";
     /* add charts */
     column-gap: 1%;
-    margin-top: 2%;
-    margin-bottom: 8%;
 }
 
 #the_map {
-    height:80vh;
+    height:75vh;
     grid-area: main_map;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     grid-template-rows: repeat(3, minmax(0, 1fr));
     align-items: center;
     justify-items: right;  
-    margin-top: 0;
+    margin-top: -10px;
 }
 
 #placeForButtons {
@@ -108,7 +106,7 @@ li.navitem {
 
 li.navitem.logo {
     float: left;
-    padding: 14px 16px;
+    padding: 14px 16px 0px 16px;
 }
 
 li.navitem.logo a {
@@ -123,7 +121,8 @@ li.navitem a {
     color: #333;
     letter-spacing: .3px;
     text-align: center;
-    padding: 14px 16px;
+    padding: 14px 16px 0px 16px;
+
     text-decoration: none;
     text-transform: uppercase;
     font-family: Manrope, sans-serif;
