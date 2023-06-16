@@ -436,7 +436,7 @@ function moveProgress() {
     let careNegRatio = (responseCount["careNegCount"] / totalCaregiverCount) * 100
     let careNeuRatio = (responseCount["careNeuCount"] / totalCaregiverCount) * 100
 
-    let totalNoncaregiverCount = responseCount["carePosCount"] + responseCount["careNegCount"] + responseCount["careNeuCount"]
+    let totalNoncaregiverCount = responseCount["nonPosCount"] + responseCount["nonNegCount"] + responseCount["nonNeuCount"]
     let nonPosRatio = (responseCount["nonPosCount"] / totalNoncaregiverCount) * 100
     let nonNegRatio = (responseCount["nonNegCount"] / totalNoncaregiverCount) * 100
     let nonNeuRatio = (responseCount["nonNeuCount"] / totalNoncaregiverCount) * 100
